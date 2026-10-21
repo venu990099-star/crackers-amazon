@@ -486,7 +486,7 @@ ${itemsText}
 
 Please share live tracking updates on this WhatsApp number!`;
 
-  window.open(`https://wa.me/919876543210?text=${encodeURIComponent(msg)}`, '_blank');
+  window.open(`https://wa.me/918431027743?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 // Package Tracking via SQLite Backend API
