@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>crackers.amazon.dev : Sivakasi Crackers Bangalore - Kengeri Central Hub</title>
+  
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="crackers.amazon.dev : Online Shopping for Sivakasi Fireworks in Bangalore">
+  <meta name="description" content="Shop Sivakasi & Hosur Diwali crackers on crackers.amazon.dev at flat 80% OFF. Fast express delivery from Kengeri Hub to Challaghatta, Chickpet, Majestic, Banashankari & Whitefield.">
+  <meta name="keywords" content="crackers.amazon.dev, amazon crackers, sivakasi crackers bangalore, crackers kengeri, crackers chickpet, majestic crackers, challaghatta crackers">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="crackers.amazon.dev | Express Delivery from Kengeri Hub">
+  <meta property="og:image" content="images/amazon-diwali-banner.jpg">
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="amazon-body">
+
+  <!-- Top Amazon Header -->
+  <header class="amazon-header">
+    <div class="header-main-row">
+      <!-- Amazon Cracker Logo -->
+      <a href="#" class="amazon-logo-wrap" title="crackers.amazon.dev">
+        <div class="logo-box">
+          <div class="amazon-cracker-spark"><i class="fa-solid fa-sparkles"></i> 🎆</div>
+          <span class="amz-text"><span style="color:#ffa41c;font-size:0.85em;font-weight:700;">crackers.</span>amazon</span>
+          <div class="amz-smile-curve">
+            <svg viewBox="0 0 100 25" class="smile-svg">
+              <path d="M 5,8 Q 50,24 92,6" fill="transparent" stroke="#ff9900" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M 85,2 Q 95,8 88,14 Z" fill="#ff9900"/>
+            </svg>
+            <span class="sparkler-fuse">✨</span>
+          </div>
+        </div>
+        <span class="amz-in" style="color:#ffa41c;">.dev</span>
+      </a>
+
+      <!-- Deliver To Location Box -->
+      <div class="nav-location-box" onclick="scrollToLocationChecker()">
+        <div class="loc-icon"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="loc-text">
+          <span class="loc-line1">Deliver to Bangalore 560060</span>
+          <span class="loc-line2" id="currentLocalityDisplay">Kengeri Hub & Routes ▼</span>
+        </div>
+      </div>
+
+      <!-- Amazon Global Search Bar -->
+      <div class="amazon-search-bar">
+        <div class="search-category-dropdown">
+          <select id="amzCategorySelect" onchange="onCategorySelectChange(this.value)">
+            <option value="all">All Crackers</option>
+            <option value="aerial">Sky Shots</option>
+            <option value="combos">Gift Boxes</option>
+            <option value="sparklers">Sparklers</option>
+            <option value="flowerpots">Flower Pots</option>
+            <option value="chakkars">Chakkars</option>
+            <option value="kids">Kids Special</option>
+          </select>
+        </div>
+        <input type="text" id="catalogSearchInput" placeholder="Search Amazon Crackers (e.g. 50 shots, sparkler, anar, combo)...">
+        <button class="search-submit-btn" onclick="triggerSearch()" aria-label="Search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+
+      <!-- Language Pill -->
+      <div class="nav-right-item lang-selector">
+        <span class="flag-icon">🇮🇳</span>
+        <span class="lang-code">EN ▼</span>
+      </div>
+
+      <!-- Customer Support / WhatsApp Help -->
+      <a href="https://wa.me/919876543210" target="_blank" class="nav-right-item" style="text-decoration: none; color: inherit;">
+        <span class="nav-line1">Customer Help</span>
+        <span class="nav-line2">WhatsApp 24x7</span>
+      </a>
+
+      <!-- Returns & Orders / Tracking Link -->
+      <div class="nav-right-item track-orders-link" onclick="scrollToTracking()">
+        <span class="nav-line1">Returns</span>
+        <span class="nav-line2">& Orders 📦</span>
+      </div>
+
+      <!-- Amazon Cart Button -->
+      <div class="amazon-cart-btn" onclick="openCart()">
+        <div class="cart-icon-wrap">
+          <span class="cart-item-count" id="cartCountBadge">0</span>
+          <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+        <span class="cart-label">Cart</span>
+      </div>
+    </div>
+
+    <!-- Secondary Amazon Subnav -->
+    <div class="amazon-subnav">
+      <div class="subnav-left">
+        <button class="subnav-all-btn" onclick="openMobileMenu()"><i class="fa-solid fa-bars"></i> All</button>
+        <a href="#amazon-deals" class="subnav-link">Today's Diwali Deals</a>
+        <a href="#combos-section" class="subnav-link">Family Combos</a>
+        <a href="#kengeri-routes" class="subnav-link"><i class="fa-solid fa-truck-fast text-orange"></i> Kengeri Express Delivery</a>
+        <a href="#catalog-section" class="subnav-link">Wholesale Price List</a>
+        <a href="#green-compliance" class="subnav-link">🌿 CSIR-NEERI Green Crackers</a>
+        <a href="#track-section" class="subnav-link">Track Your Package</a>
+      </div>
+      <div class="subnav-right">
+        <span class="festive-sale-tag">🎉 Amazon Big Diwali Festival • Up to 80% OFF</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Amazon Hero Carousel Banner -->
+  <section class="amazon-hero-banner" style="background-image: url('images/amazon-diwali-banner.jpg');">
+    <div class="banner-gradient-overlay"></div>
+  </section>
+
+  <!-- Amazon 4-Quad Cards Row -->
+  <section class="amazon-quad-section" id="amazon-deals">
+    <div class="container">
+      <div class="quad-grid">
+        
+        <!-- Quad Card 1: Sky Shots (Stock Incoming) -->
+        <div class="quad-card">
+          <h3>Aerial Sky Shots</h3>
+          <div class="stock-incoming-box">
+            <i class="fa-solid fa-boxes-packing text-orange" style="font-size: 2.2rem; margin-bottom: 0.5rem;"></i>
+            <h4>Fresh Stock Arriving</h4>
+            <p>Real box photos & wholesale prices will be published as soon as stock reaches Kengeri Hub.</p>
+          </div>
+          <span class="quad-see-more" style="color: var(--amz-orange);"><i class="fa-solid fa-clock"></i> Arriving at Kengeri Hub Soon</span>
+        </div>
+
+        <!-- Quad Card 2: Family Combos (Stock Incoming) -->
+        <div class="quad-card">
+          <h3>Diwali Family Boxes</h3>
+          <div class="stock-incoming-box">
+            <i class="fa-solid fa-gift text-orange" style="font-size: 2.2rem; margin-bottom: 0.5rem;"></i>
+            <h4>Custom Combos Pending</h4>
+            <p>Real assortment photos & factory rates will be posted once shipment is unboxed.</p>
+          </div>
+          <span class="quad-see-more" style="color: var(--amz-orange);"><i class="fa-solid fa-clock"></i> Arriving at Kengeri Hub Soon</span>
+        </div>
+
+        <!-- Quad Card 3: Kengeri & Bangalore Express Routes -->
+        <div class="quad-card">
+          <h3>Kengeri Fast Delivery Zones</h3>
+          <div class="kengeri-hub-box">
+            <div class="hub-pill"><i class="fa-solid fa-warehouse"></i> Central Hub: Kengeri</div>
+            <ul class="quad-route-list">
+              <li><i class="fa-solid fa-circle-check text-green"></i> <strong>Kengeri & Challaghatta:</strong> 1-2 Hrs</li>
+              <li><i class="fa-solid fa-circle-check text-green"></i> <strong>Chickpet & Majestic:</strong> 3-4 Hrs</li>
+              <li><i class="fa-solid fa-circle-check text-green"></i> <strong>Banashankari & RR Nagar:</strong> 2-3 Hrs</li>
+              <li><i class="fa-solid fa-circle-check text-green"></i> <strong>Whitefield:</strong> Same-day Express</li>
+            </ul>
+          </div>
+          <a href="#kengeri-routes" class="quad-see-more">Check your delivery speed</a>
+        </div>
+
+        <!-- Quad Card 4: 100% Certified Green Crackers -->
+        <div class="quad-card">
+          <h3>Apartment Legal Green Crackers</h3>
+          <div class="green-quad-box">
+            <div class="seal-icon-mini"><i class="fa-solid fa-leaf"></i></div>
+            <h4>CSIR-NEERI Certified</h4>
+            <p>100% Approved for all Bangalore high-rise apartments with official scannable QR codes.</p>
+            <div class="badge-mini-wrap">
+              <span>Low Smoke</span>
+              <span>No Barium</span>
+              <span>Safe Sound</span>
+            </div>
+          </div>
+          <a href="#green-compliance" class="quad-see-more">View Green Cracker certificate</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Amazon Delivery & Location Checker Section -->
+  <section class="amazon-delivery-section" id="kengeri-routes">
+    <div class="container">
+      <div class="delivery-bar-card">
+        <div class="delivery-bar-text">
+          <i class="fa-solid fa-truck-fast text-orange"></i>
+          <div>
+            <strong>Kengeri Central Dispatch Hub • Check Delivery Speed in Your Locality</strong>
+            <p>We deliver daily across Kengeri, Challaghatta, Chickpet, Majestic, Banashankari, Whitefield and surrounding areas.</p>
+          </div>
+        </div>
+        <div class="delivery-input-group">
+          <input type="text" id="pincodeInput" placeholder="Enter locality (e.g. Kengeri, Challaghatta, Chickpet, 560060)">
+          <button class="amz-btn-yellow" id="checkPincodeBtn">Check Speed</button>
+        </div>
+      </div>
+      <div id="pincodeResult" class="pincode-result" style="display: none;"></div>
+    </div>
+  </section>
+
+  <!-- Amazon Combos Section (Driven by Seller Uploads) -->
+  <section class="amazon-combos-section" id="combos-section">
+    <div class="container">
+      <div class="shelf-header">
+        <h2>Diwali 2026 Family Combos & Value Packs</h2>
+        <span class="shelf-sub">Curated direct Sivakasi packs — updated live when stock is received</span>
+      </div>
+
+      <div class="combos-row" id="combosRow">
+        <!-- Rendered dynamically by JavaScript when seller uploads stock -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Amazon Product Catalog Section -->
+  <section class="amazon-catalog-section" id="catalog-section">
+    <div class="container">
+      <div class="catalog-header-bar">
+        <div>
+          <h2>Results & Wholesale Inventory</h2>
+          <span class="catalog-sub-text" id="itemsFoundCount">Showing all items in stock</span>
+        </div>
+        <div class="catalog-filter-tabs">
+          <button class="tab-chip active" data-category="all" onclick="setCategoryFilter('all')">All</button>
+          <button class="tab-chip" data-category="aerial" onclick="setCategoryFilter('aerial')">Sky Shots</button>
+          <button class="tab-chip" data-category="sparklers" onclick="setCategoryFilter('sparklers')">Sparklers</button>
+          <button class="tab-chip" data-category="flowerpots" onclick="setCategoryFilter('flowerpots')">Flower Pots</button>
+          <button class="tab-chip" data-category="chakkars" onclick="setCategoryFilter('chakkars')">Chakkars</button>
+          <button class="tab-chip" data-category="kids" onclick="setCategoryFilter('kids')">Kids Special</button>
+        </div>
+      </div>
+
+      <!-- Real Amazon-Style Product Grid -->
+      <div class="amazon-product-grid" id="productGrid">
+        <!-- Rendered by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Amazon "Your Orders & Package Tracker" Section -->
+  <section class="amazon-tracker-section" id="track-section">
+    <div class="container">
+      <div class="tracker-card">
+        <div class="tracker-title-row">
+          <i class="fa-solid fa-box-open text-orange"></i>
+          <div>
+            <h3>Your Orders & Real-Time Package Tracker</h3>
+            <p>Enter your <strong>Order ID</strong> (e.g. <code>BLR-1001</code>) or your <strong>10-digit Phone Number</strong> to see your package route and delivery van location.</p>
+          </div>
+        </div>
+
+        <div class="tracker-input-row">
+          <input type="text" id="trackSearchInput" placeholder="Enter Order ID (e.g. BLR-1001) or Phone Number">
+          <button class="amz-btn-yellow" onclick="searchOrderStatus()">Track Package</button>
+        </div>
+
+        <div id="trackingResultBox" class="tracking-result-box" style="display: none;">
+          <!-- Dynamically filled by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Green Cracker Assurance Section -->
+  <section class="green-assurance-section" id="green-compliance">
+    <div class="container">
+      <div class="green-card-inner">
+        <div class="green-left">
+          <span class="green-pill">🌿 CSIR-NEERI & BBMP COMPLIANT</span>
+          <h2>100% Eco-Friendly Certified Green Fireworks</h2>
+          <p>Strictly compliant with Supreme Court and Karnataka State Pollution Control Board guidelines for Bangalore. Safe for high-rise apartments in Kengeri, Banashankari, Whitefield and beyond.</p>
+          <ul class="green-checklist">
+            <li><i class="fa-solid fa-check-circle"></i> Official scannable CSIR-NEERI QR Code on all boxes</li>
+            <li><i class="fa-solid fa-check-circle"></i> 30% Reduced particulate matter & low smoke formula</li>
+            <li><i class="fa-solid fa-check-circle"></i> Safe sound levels (< 125 dB) for kids, elders & pets</li>
+          </ul>
+        </div>
+        <div class="green-right">
+          <div class="csir-stamp-box">
+            <i class="fa-solid fa-shield-halved"></i>
+            <strong>CSIR-NEERI</strong>
+            <span>GREEN CRACKERS</span>
+            <small>BANGALORE CERTIFIED</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Amazon-Style Multi-Tier Footer -->
+  <footer class="amazon-footer">
+    <a href="#" class="back-to-top-btn" id="backToTopBtn">Back to top</a>
+    
+    <div class="footer-links-container">
+      <div class="container footer-cols-grid">
+        <div class="footer-col">
+          <h4>Get to Know Us</h4>
+          <ul>
+            <li><a href="#">About Amazon Crackers Bangalore</a></li>
+            <li><a href="#">Direct Sivakasi Factory Tie-up</a></li>
+            <li><a href="#">Kengeri Central Dispatch Hub</a></li>
+            <li><a href="#green-compliance">Green Cracker Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Delivery Corridors</h4>
+          <ul>
+            <li><a href="#kengeri-routes">Kengeri Satellite Town & Metro</a></li>
+            <li><a href="#kengeri-routes">Challaghatta & RV College</a></li>
+            <li><a href="#kengeri-routes">Chickpet Wholesale Market</a></li>
+            <li><a href="#kengeri-routes">Majestic & Gandhinagar</a></li>
+            <li><a href="#kengeri-routes">Banashankari 1st, 2nd, 3rd Stage</a></li>
+            <li><a href="#kengeri-routes">Whitefield & IT Corridor</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Make Money with Us</h4>
+          <ul>
+            <li><a href="#kengeri-routes">Apartment Society Bulk Supply</a></li>
+            <li><a href="#kengeri-routes">Corporate Diwali Gifting</a></li>
+            <li><a href="#kengeri-routes">Wholesale Distribution Bangalore</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Let Us Help You</h4>
+          <ul>
+            <li><a href="#track-section">Your Account & Order Status</a></li>
+            <li><a href="#track-section">Returns & Replacement Center</a></li>
+            <li><a href="https://wa.me/919876543210" target="_blank">WhatsApp Help Desk: +91 98765 43210</a></li>
+            <li><a href="#">Kengeri Hub Dispatch: 7:30 AM - 11 PM</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <div class="container footer-bottom-inner">
+        <div class="bottom-logo">
+          <span class="amz-text-small">amazon<span class="amz-sub">.crackers</span></span>
+        </div>
+        <div class="bottom-legal">
+          <p>© 2026 Amazon Crackers Bangalore. Direct Sivakasi Wholesale Dispatch Hub, Kengeri, Bengaluru 560060.</p>
+          <p class="disclaimer-text">
+            Operating independently as a dedicated festival wholesale delivery hub for Bengaluru (Kengeri, Challaghatta, Chickpet, Majestic, Banashankari, Whitefield).
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Amazon Slide-Out Cart Drawer -->
+  <div class="cart-drawer-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header">
+      <div class="cart-title-wrap">
+        <i class="fa-solid fa-cart-shopping text-orange"></i>
+        <h3>Shopping Cart</h3>
+        <span class="cart-items-counter" id="drawerItemsCount">(0 items)</span>
+      </div>
+      <button class="close-cart-btn" id="closeCartBtn" aria-label="Close Cart"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- Free Delivery Threshold Tracker -->
+    <div class="delivery-progress-wrap">
+      <div class="progress-info">
+        <span id="deliveryProgressText">Add ₹2,499 for <strong>FREE Kengeri Express Delivery</strong></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="deliveryProgressBar" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="cart-drawer-items" id="cartItemsList">
+      <!-- Injected by JavaScript -->
+    </div>
+
+    <div class="cart-drawer-footer" id="cartFooter">
+      <div class="bill-breakdown">
+        <div class="bill-row">
+          <span>Total M.R.P.:</span>
+          <span class="strike" id="totalMrp">₹0</span>
+        </div>
+        <div class="bill-row text-green">
+          <span>Your Total Savings:</span>
+          <span id="totalSavings">-₹0 (Up to 80% OFF)</span>
+        </div>
+        <div class="bill-row subtotal-row">
+          <span>Subtotal:</span>
+          <span class="amz-rupee-lg" id="netPayableTotal">₹0</span>
+        </div>
+      </div>
+
+      <button class="amz-btn-yellow w-100 btn-checkout-lg" onclick="openCheckoutModal()">
+        Proceed to Buy (<span id="checkoutItemCount">0</span> items)
+      </button>
+      <button class="amz-btn-whatsapp w-100" style="margin-top: 0.5rem;" onclick="checkoutViaWhatsapp()">
+        <i class="fa-brands fa-whatsapp"></i> Buy via WhatsApp
+      </button>
+      <p class="safe-note"><i class="fa-solid fa-lock"></i> 100% Safe Checkout • Pay on Delivery (Cash/UPI)</p>
+    </div>
+  </aside>
+
+  <!-- Amazon 1-Page Checkout Modal -->
+  <div class="modal-backdrop" id="checkoutModalBackdrop">
+    <div class="modal-card amazon-checkout-card">
+      <div class="amazon-checkout-header">
+        <div class="amz-checkout-logo">
+          <span class="amz-text">amazon<span class="amz-sub">.crackers</span></span>
+          <span class="checkout-title-tag">Checkout</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeCheckoutModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body amazon-checkout-body">
+        <div class="order-summary-box">
+          <div><strong id="modalSummaryItems">0 Items</strong> in your cart</div>
+          <div>Order Total: <strong class="amz-rupee-lg" id="modalSummaryTotal">₹0</strong></div>
+        </div>
+
+        <form id="nativeOrderForm" onsubmit="submitNativeOrder(event)">
+          <!-- Step 1: Delivery Address -->
+          <div class="checkout-section-box">
+            <div class="section-badge">1</div>
+            <div class="section-content">
+              <h4>Select Delivery Address (Bangalore)</h4>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Full Name *</label>
+                  <input type="text" id="orderCustName" required placeholder="First and last name">
+                </div>
+                <div class="form-group">
+                  <label>Mobile Number *</label>
+                  <input type="tel" id="orderCustPhone" required pattern="[0-9]{10}" placeholder="10-digit mobile number">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Delivery Locality *</label>
+                  <select id="orderCustLocality" required onchange="handleLocalityChange(this.value)">
+                    <option value="">-- Choose Locality --</option>
+                    <option value="Kengeri (Central Hub)">Kengeri (Satellite Town / Metro / Hub Area)</option>
+                    <option value="Challaghatta">Challaghatta (Near RVCE / Mysore Road)</option>
+                    <option value="Chickpet">Chickpet (Commercial Market Hub)</option>
+                    <option value="Majestic">Majestic (Gandhinagar / Central)</option>
+                    <option value="Banashankari">Banashankari (1st, 2nd, 3rd Stage)</option>
+                    <option value="RR Nagar">RR Nagar (Rajarajeshwari Nagar)</option>
+                    <option value="Nagarbhavi">Nagarbhavi & Vijayanagar</option>
+                    <option value="Nayandahalli">Nayandahalli / Mysore Road</option>
+                    <option value="Whitefield">Whitefield & IT Corridor</option>
+                    <option value="Other Bangalore Area">Other Bangalore Area</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Pincode *</label>
+                  <input type="text" id="orderCustPincode" required placeholder="6 digits PIN">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Flat, House no., Building, Company, Apartment *</label>
+                <textarea id="orderCustAddress" rows="2" required placeholder="Street address and landmark"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Delivery Instructions (Optional)</label>
+                <input type="text" id="orderNotes" placeholder="e.g. Call upon arrival, deliver after 6 PM">
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Payment Method -->
+          <div class="checkout-section-box">
+            <div class="section-badge">2</div>
+            <div class="section-content">
+              <h4>Payment Method</h4>
+              <div class="payment-options">
+                <label class="radio-label">
+                  <input type="radio" name="paymentMethod" value="Cash on Delivery (COD)" checked>
+                  <span><i class="fa-solid fa-money-bill-wave text-green"></i> <strong>Cash on Delivery (COD)</strong> (Pay cash when package arrives)</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="paymentMethod" value="UPI on Delivery (GPay / PhonePe / Paytm)">
+                  <span><i class="fa-brands fa-google-pay text-orange"></i> <strong>UPI on Delivery</strong> (Scan QR code on delivery with GPay / PhonePe)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Place Order -->
+          <div class="checkout-section-box">
+            <div class="section-badge">3</div>
+            <div class="section-content">
+              <h4>Review and Place Order</h4>
+              <p class="terms-text">By placing your order, you agree to Amazon Crackers Bangalore conditions of use and privacy notice.</p>
+              <button type="submit" class="amz-btn-yellow w-100 btn-place-order">
+                Place Your Order
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Success Modal -->
+  <div class="modal-backdrop" id="orderSuccessModalBackdrop">
+    <div class="modal-card success-card">
+      <div class="amz-success-header">
+        <i class="fa-solid fa-circle-check text-green"></i>
+        <h2>Order placed, thank you!</h2>
+        <p>Confirmation has been recorded. Dispatched from <strong>Kengeri Central Warehouse</strong>.</p>
+      </div>
+
+      <div class="order-id-badge">
+        <span>Order ID:</span>
+        <strong id="createdOrderId">BLR-XXXX</strong>
+      </div>
+
+      <p class="delivery-estimate-text">
+        <i class="fa-solid fa-truck-fast text-orange"></i> Estimated Delivery: <strong>Today / Tomorrow (Fast Kengeri Route)</strong>
+      </p>
+
+      <div class="success-actions">
+        <button class="amz-btn-yellow" onclick="trackFromSuccessModal()">
+          <i class="fa-solid fa-location-crosshairs"></i> Track Your Package
+        </button>
+        <button class="amz-btn-whatsapp" onclick="sendOrderSummaryToWhatsapp()">
+          <i class="fa-brands fa-whatsapp"></i> Receive WhatsApp Notifications
+        </button>
+        <button class="btn btn-outline" onclick="closeSuccessModal()">Continue Shopping</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

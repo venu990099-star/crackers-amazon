@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: crackers-amazon
+    env: python
+    plan: free
+    region: singapore
+    buildCommand: "echo 'No build dependencies needed'"
+    startCommand: "python server.py"
+    healthCheckPath: /
+    autoDeploy: true

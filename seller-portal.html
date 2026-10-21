@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>crackers.amazon.dev — Private Seller Central</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --amz-dark: #131921;
+      --amz-subnav: #232f3e;
+      --amz-yellow: #ffd814;
+      --amz-yellow-hover: #f7ca00;
+      --amz-orange: #ffa41c;
+      --amz-green: #067d62;
+      --amz-red: #cc0c39;
+      --bg-body: #0d111b;
+      --card-bg: #161c2d;
+      --border-color: #27314a;
+      --text-white: #ffffff;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-white);
+      line-height: 1.5;
+    }
+
+    /* Top Seller Header */
+    .seller-header {
+      background-color: var(--amz-dark);
+      border-bottom: 2px solid var(--amz-orange);
+      padding: 0.8rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .brand-title span { color: var(--amz-orange); }
+    .badge-secure {
+      background: rgba(6, 125, 98, 0.2);
+      border: 1px solid var(--amz-green);
+      color: #34d399;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      margin-left: 0.5rem;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.88rem;
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 0.35rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+
+    .btn-logout:hover { background: var(--amz-red); border-color: var(--amz-red); }
+
+    .container { max-width: 1280px; margin: 0 auto; padding: 1.5rem; }
+
+    /* Login Screen */
+    .login-container {
+      max-width: 420px;
+      margin: 5rem auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2.2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+
+    .login-icon {
+      font-size: 2.8rem;
+      color: var(--amz-orange);
+      margin-bottom: 0.8rem;
+    }
+
+    .login-container h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .login-container p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 1.1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 0.35rem;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      color: #fff;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--amz-orange);
+      box-shadow: 0 0 0 2px rgba(255, 164, 28, 0.25);
+    }
+
+    .btn-amz-yellow {
+      background: var(--amz-yellow);
+      border: 1px solid #fcd200;
+      color: #0f1111;
+      font-weight: 700;
+      padding: 0.75rem 1.4rem;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: background 0.15s ease;
+    }
+
+    .btn-amz-yellow:hover { background: var(--amz-yellow-hover); }
+
+    .error-msg {
+      color: #fb7185;
+      font-size: 0.85rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+
+    /* Admin Tabs */
+    .admin-nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 0.8rem 1.4rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover { color: #fff; }
+    .tab-btn.active {
+      color: var(--amz-orange);
+      border-bottom-color: var(--amz-orange);
+    }
+
+    .badge-num {
+      background: var(--amz-red);
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Orders Section */
+    .orders-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .order-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .order-id {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--amz-orange);
+    }
+
+    .order-status-badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .status-received { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; }
+    .status-packed { background: rgba(255, 216, 20, 0.2); color: #ffd814; border: 1px solid #ffd814; }
+    .status-out_for_delivery { background: rgba(255, 164, 28, 0.25); color: #ffa41c; border: 1px solid #ffa41c; }
+    .status-delivered { background: rgba(6, 125, 98, 0.25); color: #34d399; border: 1px solid #34d399; }
+
+    .order-grid-info {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .cust-detail-line {
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      color: #e2e8f0;
+    }
+
+    .cust-contact-btns {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+
+    .btn-call {
+      background: #0284c7;
+      color: #fff;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .btn-wa {
+      background: #25d366;
+      color: #fff;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .order-items-box {
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.8rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    .order-items-box li {
+      padding: 0.25rem 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    /* Delivery Controller Box */
+    .delivery-controller-bar {
+      background: rgba(255, 164, 28, 0.08);
+      border: 1px solid rgba(255, 164, 28, 0.3);
+      border-radius: 6px;
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.5fr auto;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .delivery-controller-bar select, .delivery-controller-bar input {
+      padding: 0.55rem;
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    /* Product Grid */
+    .stock-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+    }
+
+    .stock-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      gap: 0.9rem;
+    }
+
+    .stock-card img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #000;
+    }
+
+    .stock-info { flex: 1; }
+    .stock-info h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+
+    /* Upload Form Card */
+    .upload-card {
+      max-width: 650px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 0 auto;
+    }
+
+    .upload-dropzone {
+      border: 2px dashed var(--amz-orange);
+      background: rgba(255, 164, 28, 0.05);
+      border-radius: 6px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+
+    .upload-dropzone:hover { background: rgba(255, 164, 28, 0.1); }
+    .img-preview {
+      max-height: 160px;
+      border-radius: 6px;
+      margin-top: 0.8rem;
+      display: none;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* Toast */
+    .toast-box {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #1e293b;
+      border-left: 4px solid var(--amz-orange);
+      color: #fff;
+      padding: 0.9rem 1.4rem;
+      border-radius: 4px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      display: none;
+      z-index: 1000;
+    }
+
+    @media (max-width: 900px) {
+      .delivery-controller-bar { grid-template-columns: 1fr; }
+      .order-grid-info { grid-template-columns: 1fr; }
+      .stock-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="seller-header">
+    <div class="brand-title">
+      <i class="fa-solid fa-boxes-packing" style="color: var(--amz-orange);"></i>
+      crackers.amazon<span>.dev</span> Seller Central
+      <span class="badge-secure"><i class="fa-solid fa-lock"></i> Private & Isolated</span>
+    </div>
+
+    <div class="user-pill" id="userPill" style="display: none;">
+      <span><i class="fa-solid fa-user-check text-green"></i> Logged in as: <strong>admin</strong></span>
+      <button class="btn-logout" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </header>
+
+  <!-- Login Gate Screen -->
+  <div class="container" id="loginView">
+    <div class="login-container">
+      <div class="login-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <h2>Seller Security Login</h2>
+      <p>Only authorized store administrators can publish cracker photos, wholesale rates, and manage customer orders.</p>
+      
+      <div style="background: rgba(6, 125, 98, 0.15); border: 1px solid var(--amz-green); border-radius: 4px; padding: 0.5rem; font-size: 0.78rem; color: #34d399; margin-bottom: 1.2rem;">
+        <i class="fa-solid fa-lock"></i> Protected by Anti-Brute-Force Shield (IP Lockout after 5 failed tries)
+      </div>
+
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label><i class="fa-solid fa-user"></i> Seller Username</label>
+          <input type="text" id="adminUser" required placeholder="admin" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-key"></i> Password</label>
+          <input type="password" id="adminPass" required placeholder="crackers2026" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-amz-yellow">Login to Seller Hub</button>
+        <div class="error-msg" id="loginError">Invalid credentials. Default is admin / crackers2026</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Authenticated Seller Dashboard -->
+  <div class="container" id="dashboardView" style="display: none;">
+    <div class="admin-nav-tabs">
+      <button class="tab-btn active" id="tabBtnOrders" onclick="switchTab('orders')">
+        <i class="fa-solid fa-receipt"></i> Customer Orders <span class="badge-num" id="ordersBadge">0</span>
+      </button>
+      <button class="tab-btn" id="tabBtnStock" onclick="switchTab('stock')">
+        <i class="fa-solid fa-boxes-stacked"></i> Live Stock & Prices (<span id="stockBadge">0</span>)
+      </button>
+      <button class="tab-btn" id="tabBtnUpload" onclick="switchTab('upload')">
+        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Real Cracker Photo & Price
+      </button>
+      <button class="tab-btn" id="tabBtnSettings" onclick="switchTab('settings')">
+        <i class="fa-solid fa-shield-halved"></i> Security & Password
+      </button>
+    </div>
+
+    <!-- 1. Orders Panel -->
+    <div class="tab-panel active" id="ordersPanel">
+      <div class="orders-toolbar">
+        <h3><i class="fa-solid fa-truck-fast text-orange"></i> Live Customer Orders Feed</h3>
+        <div>
+          <button class="btn-amz-yellow" style="width: auto; padding: 0.5rem 1rem;" onclick="loadAdminOrders()">
+            <i class="fa-solid fa-arrows-rotate"></i> Refresh Orders
+          </button>
+        </div>
+      </div>
+      <div id="ordersContainer"></div>
+    </div>
+
+    <!-- 2. Live Stock Panel -->
+    <div class="tab-panel" id="stockPanel">
+      <div class="orders-toolbar">
+        <h3><i class="fa-solid fa-tags text-orange"></i> Your Published Stock on Public Store</h3>
+        <button class="btn-amz-yellow" style="width: auto; padding: 0.5rem 1rem;" onclick="switchTab('upload')">
+          <i class="fa-solid fa-plus"></i> Add New Cracker
+        </button>
+      </div>
+      <div class="stock-grid" id="stockGrid"></div>
+    </div>
+
+    <!-- 3. Upload Cracker Panel -->
+    <div class="tab-panel" id="uploadPanel">
+      <div class="upload-card">
+        <h3 style="margin-bottom: 0.4rem;"><i class="fa-solid fa-camera text-orange"></i> Upload Real Cracker Box & Price</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+          Take a photo of your actual cracker box from your phone or laptop. It will publish to your live Amazon store immediately!
+        </p>
+
+        <form onsubmit="handleProductUpload(event)">
+          <!-- Photo dropzone -->
+          <div class="upload-dropzone" onclick="document.getElementById('photoInput').click()">
+            <i class="fa-solid fa-image" style="font-size: 2.2rem; color: var(--amz-orange); margin-bottom: 0.5rem;"></i>
+            <h4>Click to choose photo from phone/camera</h4>
+            <span id="chosenFileName" style="font-size: 0.82rem; color: var(--text-muted);">No file chosen</span>
+            <div><img id="previewImg" class="img-preview" alt="Preview"></div>
+          </div>
+          <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="handleFilePreview(event)">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Cracker Name *</label>
+              <input type="text" id="prodName" required placeholder="e.g. 50-Shot Celebration Aerial Cake">
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="prodCategory" required>
+                <option value="aerial">Sky Shots & Aerial</option>
+                <option value="sparklers">Sparklers</option>
+                <option value="flowerpots">Flower Pots / Anar</option>
+                <option value="chakkars">Ground Chakkars</option>
+                <option value="kids">Kids & Novelties</option>
+                <option value="combos">Diwali Family Combos</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>M.R.P. (₹) *</label>
+              <input type="number" id="prodMrp" required placeholder="e.g. 3500">
+            </div>
+            <div class="form-group">
+              <label>Wholesale Selling Price (₹) *</label>
+              <input type="number" id="prodPrice" required placeholder="e.g. 950">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Packaging / Quantity Description</label>
+            <input type="text" id="prodSpecs" placeholder="e.g. 1 Box (10 Pcs) • Multicolor High Altitude">
+          </div>
+
+          <button type="submit" class="btn-amz-yellow" style="margin-top: 0.8rem; font-size: 1.05rem;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Real Box to Public Store
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4. Security & Password Settings Panel -->
+    <div class="tab-panel" id="settingsPanel">
+      <div class="upload-card">
+        <h3 style="margin-bottom: 0.4rem;"><i class="fa-solid fa-lock text-orange"></i> Seller Security & Password Settings</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+          Change your login credentials so nobody else can guess or brute-force your password. Passwords are saved with salted SHA-256 on the dedicated server.
+        </p>
+
+        <div style="background: rgba(6, 125, 98, 0.15); border: 1px solid var(--amz-green); border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem;">
+          <h4 style="color: #34d399; font-size: 0.95rem; margin-bottom: 0.3rem;"><i class="fa-solid fa-shield-halved"></i> Active Security Defenses:</h4>
+          <ul style="font-size: 0.82rem; color: #cbd5e1; list-style: disc; margin-left: 1.2rem; line-height: 1.6;">
+            <li><strong>Anti-Brute-Force Rate Limiting:</strong> Any IP that fails 5 consecutive login attempts is locked out for 15 minutes.</li>
+            <li><strong>Isolated Architecture:</strong> The published customer storefront has ZERO seller controls or passwords in its code.</li>
+            <li><strong>Cryptographic Sessions:</strong> 256-bit random session tokens validated on every request.</li>
+          </ul>
+        </div>
+
+        <form onsubmit="handleChangePassword(event)">
+          <div class="form-group">
+            <label><i class="fa-solid fa-user"></i> New Seller Username *</label>
+            <input type="text" id="newUsername" required placeholder="e.g. kengeri_boss">
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-key"></i> New Secret Password (min 6 characters) *</label>
+            <input type="password" id="newPassword" required placeholder="Enter strong secret password" minlength="6">
+          </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-check-double"></i> Confirm New Secret Password *</label>
+            <input type="password" id="confirmPassword" required placeholder="Re-enter same secret password" minlength="6">
+          </div>
+
+          <button type="submit" class="btn-amz-yellow" style="margin-top: 0.8rem;">
+            <i class="fa-solid fa-floppy-disk"></i> Update & Save New Password
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-box" id="toastBox">Action completed successfully</div>
+
+  <script>
+    let authToken = localStorage.getItem('amz_seller_token') || '';
+    let uploadedBase64 = '';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (authToken) {
+        showDashboard();
+      }
+    });
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('adminUser').value.trim();
+      const pass = document.getElementById('adminPass').value.trim();
+      const err = document.getElementById('loginError');
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, password: pass })
+        });
+        const data = await res.json();
+
+        if (data.success && data.token) {
+          authToken = data.token;
+          localStorage.setItem('amz_seller_token', authToken);
+          err.style.display = 'none';
+          showDashboard();
+        } else {
+          err.style.display = 'block';
+        }
+      } catch (err) {
+        alert('Server connection error. Make sure server is running.');
+      }
+    }
+
+    function logoutAdmin() {
+      authToken = '';
+      localStorage.removeItem('amz_seller_token');
+      document.getElementById('dashboardView').style.display = 'none';
+      document.getElementById('userPill').style.display = 'none';
+      document.getElementById('loginView').style.display = 'block';
+    }
+
+    function showDashboard() {
+      document.getElementById('loginView').style.display = 'none';
+      document.getElementById('dashboardView').style.display = 'block';
+      document.getElementById('userPill').style.display = 'flex';
+      loadAdminOrders();
+      loadAdminStock();
+    }
+
+    function switchTab(tab) {
+      document.getElementById('tabBtnOrders').classList.toggle('active', tab === 'orders');
+      document.getElementById('tabBtnStock').classList.toggle('active', tab === 'stock');
+      document.getElementById('tabBtnUpload').classList.toggle('active', tab === 'upload');
+      document.getElementById('tabBtnSettings').classList.toggle('active', tab === 'settings');
+
+      document.getElementById('ordersPanel').classList.toggle('active', tab === 'orders');
+      document.getElementById('stockPanel').classList.toggle('active', tab === 'stock');
+      document.getElementById('uploadPanel').classList.toggle('active', tab === 'upload');
+      document.getElementById('settingsPanel').classList.toggle('active', tab === 'settings');
+
+      if (tab === 'orders') loadAdminOrders();
+      if (tab === 'stock') loadAdminStock();
+    }
+
+    let previousOrderCount = null;
+    function playOrderChime() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+      } catch (e) {}
+    }
+
+    // Orders Feed
+    async function loadAdminOrders(showToastOnSilent = true) {
+      try {
+        const res = await fetch('/api/admin/orders', {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          logoutAdmin();
+          return;
+        }
+
+        const orders = data.orders || [];
+        const prevCount = previousOrderCount;
+        previousOrderCount = orders.length;
+
+        // Play alert sound if new order received
+        if (prevCount !== null && orders.length > prevCount) {
+          playOrderChime();
+          showToast(`🔔 NEW ORDER RECEIVED! Order #${orders[0]?.id} from ${orders[0]?.customerName}`);
+        }
+
+        document.getElementById('ordersBadge').innerText = orders.length;
+        const container = document.getElementById('ordersContainer');
+
+        if (orders.length === 0) {
+          container.innerHTML = `
+            <div style="background: var(--card-bg); padding: 3rem; text-align: center; border-radius: 8px; border: 1px dashed var(--border-color);">
+              <i class="fa-solid fa-box-open" style="font-size: 3rem; color: #64748b; margin-bottom: 0.8rem;"></i>
+              <h3>No customer orders placed yet</h3>
+              <p style="color: var(--text-muted);">As soon as a customer orders on the published website, their full delivery address, phone number, and items will appear here live!</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = orders.map(o => {
+          let itemsList = o.items.map(it => `<li><strong>${it.name}</strong> × ${it.qty} (₹${(it.price * it.qty).toLocaleString('en-IN')})</li>`).join('');
+
+          return `
+            <div class="order-card" id="card-${o.id}">
+              <div class="order-card-header">
+                <div>
+                  <span class="order-id">#${o.id}</span>
+                  <span style="font-size: 0.82rem; color: var(--text-muted); margin-left: 0.6rem;">${o.timestamp}</span>
+                </div>
+                <div>
+                  <span class="order-status-badge status-${o.status}">${o.status.toUpperCase().replace(/_/g, ' ')}</span>
+                </div>
+              </div>
+
+              <div class="order-grid-info">
+                <div>
+                  <div class="cust-detail-line"><strong>👤 Customer:</strong> ${o.customerName}</div>
+                  <div class="cust-detail-line"><strong>📞 Mobile:</strong> ${o.phone}</div>
+                  <div class="cust-detail-line"><strong>📍 Locality:</strong> <span style="color: var(--amz-orange); font-weight: 700;">${o.locality}</span> (PIN: ${o.pincode})</div>
+                  <div class="cust-detail-line"><strong>🏠 Address:</strong> ${o.address}</div>
+                  ${o.notes ? `<div class="cust-detail-line" style="color: #fbbf24;"><strong>📝 Note:</strong> ${o.notes}</div>` : ''}
+
+                  <div class="cust-contact-btns">
+                    <a href="tel:${o.phone}" class="btn-call"><i class="fa-solid fa-phone"></i> Call Customer</a>
+                    <a href="https://wa.me/91${o.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(o.customerName)}%2C%20regarding%20your%20Amazon%20Crackers%20Order%20${o.id}%3A" target="_blank" class="btn-wa">
+                      <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+                    </a>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="order-items-box">
+                    <div style="font-weight: 700; color: #cbd5e1; margin-bottom: 0.4rem;">Ordered Items:</div>
+                    <ul style="list-style: none;">${itemsList}</ul>
+                    <div style="margin-top: 0.6rem; border-top: 1px dashed #475569; padding-top: 0.4rem; font-size: 0.95rem;">
+                      Total Payable: <strong style="color: #fbbf24;">₹${o.totalPayable.toLocaleString('en-IN')}</strong> (${o.paymentMethod})
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Real-time Delivery Status & Location Controller -->
+              <div class="delivery-controller-bar">
+                <div>
+                  <label style="font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 2px;">Change Status:</label>
+                  <select id="status-${o.id}">
+                    <option value="received" ${o.status === 'received' ? 'selected' : ''}>1. Order Received</option>
+                    <option value="packed" ${o.status === 'packed' ? 'selected' : ''}>2. Packed at Kengeri Hub</option>
+                    <option value="out_for_delivery" ${o.status === 'out_for_delivery' ? 'selected' : ''}>3. Out for Delivery</option>
+                    <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>4. Delivered</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style="font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 2px;">Estimated Delivery Time:</label>
+                  <input type="text" id="time-${o.id}" value="${o.estimatedDelivery || ''}" placeholder="e.g. Today by 4:30 PM / in 30 mins">
+                </div>
+
+                <div>
+                  <label style="font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 2px;">Live Location Note (Customer sees this):</label>
+                  <input type="text" id="loc-${o.id}" value="${o.liveLocation || ''}" placeholder="e.g. Van reached Nayandahalli, delivering in 20 mins">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 0.4rem; padding-top: 14px;">
+                  <button class="btn-amz-yellow" style="width: auto; padding: 0.45rem 0.8rem; font-size: 0.8rem;" onclick="saveDeliveryUpdate('${o.id}')">
+                    <i class="fa-solid fa-floppy-disk"></i> Save & Update
+                  </button>
+                  <button class="btn-wa" style="width: auto; padding: 0.45rem 0.8rem; font-size: 0.8rem; border: none; cursor: pointer;" onclick="sendWhatsAppDeliveryUpdate('${o.id}', '${encodeURIComponent(o.customerName)}', '${o.phone}', '${o.totalPayable}')">
+                    <i class="fa-brands fa-whatsapp"></i> Notify Customer
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function saveDeliveryUpdate(orderId, reload = true) {
+      const status = document.getElementById(`status-${orderId}`).value;
+      const estimatedDelivery = document.getElementById(`time-${orderId}`).value.trim();
+      const liveLocation = document.getElementById(`loc-${orderId}`).value.trim();
+
+      try {
+        const res = await fetch(`/api/admin/orders/${orderId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ status, estimatedDelivery, liveLocation })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          if (reload) {
+            showToast(`Order #${orderId} updated! Customer can now see new live location & delivery time.`);
+            loadAdminOrders(false);
+          }
+          return true;
+        } else {
+          alert('Failed to update order: ' + (data.error || ''));
+          return false;
+        }
+      } catch (e) {
+        alert('Server error.');
+        return false;
+      }
+    }
+
+    async function sendWhatsAppDeliveryUpdate(orderId, encodedName, phone, totalPayable) {
+      // First save latest inputs
+      await saveDeliveryUpdate(orderId, false);
+
+      const status = document.getElementById(`status-${orderId}`).value;
+      const statusLabels = {
+        'received': 'Order Received & Confirmed at Hub',
+        'packed': 'Packed at Kengeri Central Warehouse',
+        'out_for_delivery': 'OUT FOR DELIVERY 🚚',
+        'delivered': 'DELIVERED 🎉'
+      };
+      const statusText = statusLabels[status] || status;
+      const time = document.getElementById(`time-${orderId}`).value.trim() || 'Today by 4:00 PM';
+      const loc = document.getElementById(`loc-${orderId}`).value.trim() || 'Dispatched from Kengeri Central Hub';
+      const custName = decodeURIComponent(encodedName);
+
+      const msg = `🪔 *Namaskara ${custName}!*
+
+Your *Amazon Diwali Crackers* Order *#${orderId}* update:
+
+📦 *Current Status:* ${statusText}
+⏰ *Estimated Arrival:* ${time}
+📍 *Live Van Location:* ${loc}
+💰 *Total Payable (COD):* ₹${Number(totalPayable).toLocaleString('en-IN')}
+
+Our delivery vehicle from *Kengeri Central Dispatch Hub* is on the way. Please keep cash or UPI ready.
+
+Track live package: http://localhost:8088/#track-section
+Direct Kengeri Warehouse Helpline: +91 98765 43210`;
+
+      const cleanPhone = phone.replace(/[^0-9]/g, '');
+      const url = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    async function handleChangePassword(e) {
+      e.preventDefault();
+      const newUsername = document.getElementById('newUsername').value.trim();
+      const newPassword = document.getElementById('newPassword').value.trim();
+      const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+      if (newPassword !== confirmPassword) {
+        alert('New passwords do not match! Please check and re-type.');
+        return;
+      }
+      if (newPassword.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ newUsername, newPassword })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Credentials updated securely! Please log in with your new password.');
+          setTimeout(() => {
+            logoutAdmin();
+          }, 1500);
+        } else {
+          alert(data.error || 'Failed to update credentials.');
+        }
+      } catch (err) {
+        alert('Server connection error.');
+      }
+    }
+
+    // Auto-refresh orders every 15 seconds
+    setInterval(() => {
+      if (authToken && document.getElementById('dashboardView').style.display !== 'none') {
+        loadAdminOrders(false);
+      }
+    }, 15000);
+
+    // Stock Management
+    async function loadAdminStock() {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const prods = data.products || [];
+
+        document.getElementById('stockBadge').innerText = prods.length;
+        const grid = document.getElementById('stockGrid');
+
+        if (prods.length === 0) {
+          grid.innerHTML = `
+            <div style="grid-column: 1 / -1; background: var(--card-bg); padding: 3rem; text-align: center; border-radius: 8px;">
+              <h4>No crackers uploaded yet</h4>
+              <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0.5rem 0 1rem;">Click "Upload Real Cracker Photo & Price" to publish your first item!</p>
+              <button class="btn-amz-yellow" style="width: auto;" onclick="switchTab('upload')">Upload Cracker Box</button>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = prods.map(p => `
+          <div class="stock-card">
+            <img src="${p.image}" alt="${p.name}">
+            <div class="stock-info">
+              <h4>${p.name}</h4>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">${p.specs || ''}</div>
+              <div style="font-size: 0.95rem; margin-top: 0.3rem;">
+                Price: <strong style="color: var(--amz-orange);">₹${p.price}</strong> 
+                <span style="font-size: 0.78rem; text-decoration: line-through; color: var(--text-muted);">MRP ₹${p.mrp}</span>
+              </div>
+              <div style="font-size: 0.78rem; margin: 0.4rem 0; color: ${p.inStock ? '#34d399' : '#fb7185'};">
+                ● ${p.inStock ? 'In Stock (Live on Store)' : 'Out of Stock'}
+              </div>
+              <div style="display: flex; gap: 0.4rem;">
+                <button class="btn-amz-yellow" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="editProductPrice('${p.id}', ${p.price})">Edit Price</button>
+                <button class="btn-logout" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="toggleStockStatus('${p.id}', ${p.inStock})">
+                  ${p.inStock ? 'Mark Out' : 'Mark In'}
+                </button>
+                <button class="btn-logout" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="deleteProduct('${p.id}')">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function editProductPrice(id, currentPrice) {
+      const newPriceStr = prompt('Enter new wholesale selling price (₹):', currentPrice);
+      if (newPriceStr !== null) {
+        const price = parseInt(newPriceStr, 10);
+        if (price > 0) {
+          await fetch(`/api/admin/products/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+            body: JSON.stringify({ price })
+          });
+          showToast(`Wholesale price updated to ₹${price}!`);
+          loadAdminStock();
+        }
+      }
+    }
+
+    async function toggleStockStatus(id, currentStatus) {
+      await fetch(`/api/admin/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({ inStock: !currentStatus })
+      });
+      showToast('Stock availability updated on public website!');
+      loadAdminStock();
+    }
+
+    async function deleteProduct(id) {
+      if (confirm('Are you sure you want to remove this item from the store?')) {
+        await fetch(`/api/admin/products/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        showToast('Item deleted from store.');
+        loadAdminStock();
+      }
+    }
+
+    // Photo Preview & Upload
+    function handleFilePreview(event) {
+      const file = event.target.files[0];
+      if (file) {
+        document.getElementById('chosenFileName').innerText = file.name;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          uploadedBase64 = e.target.result;
+          const img = document.getElementById('previewImg');
+          img.src = uploadedBase64;
+          img.style.display = 'inline-block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function handleProductUpload(e) {
+      e.preventDefault();
+
+      if (!uploadedBase64) {
+        alert('Please select or capture a real photo of your cracker box first!');
+        return;
+      }
+
+      const name = document.getElementById('prodName').value.trim();
+      const category = document.getElementById('prodCategory').value;
+      const mrp = parseInt(document.getElementById('prodMrp').value, 10);
+      const price = parseInt(document.getElementById('prodPrice').value, 10);
+      const specs = document.getElementById('prodSpecs').value.trim();
+
+      try {
+        const res = await fetch('/api/admin/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ name, category, mrp, price, specs, image: uploadedBase64 })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showToast(`Successfully published "${name}" to your live Amazon store!`);
+          uploadedBase64 = '';
+          document.getElementById('previewImg').style.display = 'none';
+          document.getElementById('chosenFileName').innerText = 'No file chosen';
+          e.target.reset();
+          switchTab('stock');
+        } else {
+          alert(data.error || 'Upload failed.');
+        }
+      } catch (err) {
+        alert('Server connection error.');
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toastBox');
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
+  </script>
+</body>
+</html>
