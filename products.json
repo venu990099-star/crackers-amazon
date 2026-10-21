@@ -1,0 +1,88 @@
+[
+  {
+    "id": "prod-sky-50",
+    "name": "Standard 50-Shot Celebration Sky Cake",
+    "category": "aerial",
+    "mrp": 1800,
+    "price": 850,
+    "specs": "50 Multi-Colour Shots (120ft Elevation)",
+    "image": "images/aerial-shots.jpg",
+    "images": [
+      "images/aerial-shots.jpg",
+      "images/gift-box.jpg",
+      "images/hero-banner.jpg"
+    ],
+    "badge": "bestseller",
+    "description": "Direct Sivakasi wholesale 50-shot aerial cake. Sky elevation above 120ft with brilliant gold strobes, crackling chrysanthemums, and emerald green palm bursts. Safety fuse included. Dispatched directly from Kengeri Central Warehouse.",
+    "inStock": true,
+    "createdAt": "2026-10-21 15:51:37"
+  },
+  {
+    "id": "prod-spark-mega",
+    "name": "Electric Sparklers Deluxe (50cm Jumbo Pack)",
+    "category": "sparklers",
+    "mrp": 400,
+    "price": 180,
+    "specs": "Pack of 10 Jumbo Sparklers (50cm)",
+    "image": "images/gift-box.jpg",
+    "images": [
+      "images/gift-box.jpg",
+      "images/hero-banner.jpg"
+    ],
+    "badge": "amazon_choice",
+    "description": "Long-lasting bright white and golden sparklers. Specially formulated for family celebrations and kids safety. Burns evenly with minimal smoke for up to 90 seconds per rod.",
+    "inStock": true,
+    "createdAt": "2026-10-21 15:51:37"
+  },
+  {
+    "id": "prod-flower-tri",
+    "name": "Special Tri-Colour Deluxe Flower Pots (Anar)",
+    "category": "flowerpots",
+    "mrp": 550,
+    "price": 260,
+    "specs": "1 Box of 10 Large Pots",
+    "image": "images/gift-box.jpg",
+    "images": [
+      "images/gift-box.jpg",
+      "images/aerial-shots.jpg"
+    ],
+    "badge": "deal",
+    "description": "Extra-high fountain reaching up to 15 feet. Multi-stage transformation from silver sparks to golden shower and green crackling tips. Made with premium Sivakasi barium-free formula.",
+    "inStock": true,
+    "createdAt": "2026-10-21 15:51:37"
+  },
+  {
+    "id": "prod-chakkar-deluxe",
+    "name": "Spinning Deluxe Wheel Ground Chakkars",
+    "category": "chakkars",
+    "mrp": 350,
+    "price": 160,
+    "specs": "1 Box of 10 Wheel Chakkars",
+    "image": "images/gift-box.jpg",
+    "images": [
+      "images/gift-box.jpg"
+    ],
+    "badge": "recommended",
+    "description": "High-speed spinning ground wheels with bright silver and red ring projections. Smooth rotation without jumping or sticking on Bangalore paved surfaces.",
+    "inStock": true,
+    "createdAt": "2026-10-21 15:51:37"
+  },
+  {
+    "id": "prod-combo-bumper",
+    "name": "Bangalore Mega Family Diwali Bumper Box (35 Items)",
+    "category": "combos",
+    "mrp": 4500,
+    "price": 1999,
+    "specs": "35 Assorted Festive Varieties",
+    "image": "images/gift-box.jpg",
+    "images": [
+      "images/gift-box.jpg",
+      "images/amazon-diwali-banner.jpg",
+      "images/aerial-shots.jpg"
+    ],
+    "badge": "bestseller",
+    "description": "Complete all-in-one Diwali celebration hamper for the entire family. Contains Sky shots, Sparklers, Anars, Chakkars, Roll caps, and Novelty crackers. 100% genuine Sivakasi wholesale pack.",
+    "inStock": true,
+    "createdAt": "2026-10-21 15:51:37"
+  }
+]

@@ -66,27 +66,25 @@ function saveCartState() {
 // Render Combos Section Dynamically
 function renderCombos() {
   const container = document.getElementById('combosRow');
+  const section = document.getElementById('combos-section');
   if (!container) return;
 
   const combos = products.filter(p => p.category === 'combos');
 
   if (combos.length === 0) {
-    container.innerHTML = `
-      <div class="empty-stock-notice">
-        <i class="fa-solid fa-gift text-orange" style="font-size: 2.8rem; margin-bottom: 0.8rem;"></i>
-        <h3>Fresh Diwali Combos Arriving Soon</h3>
-        <p>No combo packs have been published yet. Real box photos, assortment lists, and wholesale rates will appear here live once our shipment reaches Kengeri Hub.</p>
-      </div>
-    `;
+    if (section) section.style.display = 'none';
+    container.innerHTML = '';
     return;
   }
+
+  if (section) section.style.display = 'block';
 
   container.innerHTML = combos.map(prod => {
     const savingsPercent = Math.round(((prod.mrp - prod.price) / prod.mrp) * 100);
     return `
-      <div class="amz-combo-item">
+      <div class="amz-combo-item" onclick="goToProductPage('${prod.id}')" style="cursor: pointer;" title="Click to view full photos & details">
         <div class="combo-badge-tag">Family Value Pack</div>
-        <img src="${prod.image}" alt="${prod.name}">
+        <img src="${prod.image}" alt="${prod.name}" onerror="this.src='images/hero-banner.jpg'">
         <div class="combo-item-details">
           <h4>${prod.name}</h4>
           <span style="font-size: 0.78rem; color: #565959; margin-bottom: 0.4rem;">${prod.specs || ''}</span>
@@ -98,7 +96,10 @@ function renderCombos() {
           <div class="prime-delivery-tag">
             <i class="fa-solid fa-check text-orange"></i> <strong>FREE Express Delivery</strong> from Kengeri Hub
           </div>
-          <button class="amz-btn-yellow w-100" onclick="addComboToCart('${prod.id}')">Add to Cart</button>
+          <div style="display: flex; gap: 0.4rem; margin-top: 0.4rem;">
+            <button class="amz-btn-yellow" style="flex: 1;" onclick="event.stopPropagation(); addComboToCart('${prod.id}')">Add to Cart</button>
+            <button class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.6rem;" onclick="event.stopPropagation(); goToProductPage('${prod.id}')">View</button>
+          </div>
         </div>
       </div>
     `;

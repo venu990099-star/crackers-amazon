@@ -475,11 +475,33 @@
 
     <!-- 2. Live Stock Panel -->
     <div class="tab-panel" id="stockPanel">
-      <div class="orders-toolbar">
-        <h3><i class="fa-solid fa-tags text-orange"></i> Your Published Stock on Public Store</h3>
-        <button class="btn-amz-yellow" style="width: auto; padding: 0.5rem 1rem;" onclick="switchTab('upload')">
-          <i class="fa-solid fa-plus"></i> Add New Cracker
+      <div id="vaultRestoreAlert" style="display: none; background: rgba(255, 164, 28, 0.15); border: 1px solid #ffa41c; border-radius: 6px; padding: 0.8rem 1.2rem; margin-bottom: 1.2rem; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+        <div>
+          <strong style="color: #ffa41c;"><i class="fa-solid fa-cloud-arrow-up"></i> Local Backup Detected (<span id="vaultItemCount">0</span> items)</strong>
+          <p style="font-size: 0.8rem; color: #cbd5e1; margin: 0.2rem 0 0;">Did Render restart? Click below to immediately re-publish all your products to the live store with 1 click!</p>
+        </div>
+        <button class="btn-amz-yellow" style="width: auto; padding: 0.4rem 0.9rem; font-size: 0.85rem;" onclick="restoreProductsFromVault()">
+          <i class="fa-solid fa-arrows-rotate"></i> Restore My Products Now
         </button>
+      </div>
+
+      <div class="orders-toolbar">
+        <div>
+          <h3><i class="fa-solid fa-tags text-orange"></i> Your Published Stock on Public Store</h3>
+          <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-shield-halved text-green"></i> Auto-synced with products.json</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <button class="btn-amz-yellow" style="width: auto; padding: 0.5rem 1rem;" onclick="switchTab('upload')">
+            <i class="fa-solid fa-plus"></i> Add New Cracker
+          </button>
+          <button class="btn-logout" style="padding: 0.5rem 0.8rem; font-size: 0.85rem;" onclick="exportProductsBackup()" title="Download products.json for GitHub or backup">
+            <i class="fa-solid fa-download"></i> Backup JSON
+          </button>
+          <button class="btn-logout" style="padding: 0.5rem 0.8rem; font-size: 0.85rem;" onclick="document.getElementById('importBackupInput').click()" title="Restore products from JSON file">
+            <i class="fa-solid fa-upload"></i> Restore
+          </button>
+          <input type="file" id="importBackupInput" accept=".json" style="display: none;" onchange="importProductsBackup(event)">
+        </div>
       </div>
       <div class="stock-grid" id="stockGrid"></div>
     </div>
@@ -931,6 +953,11 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
         const data = await res.json();
         const prods = data.products || [];
 
+        if (prods.length > 0) {
+          localStorage.setItem('amz_crackers_seller_vault', JSON.stringify(prods));
+        }
+        checkVaultNotice(prods);
+
         document.getElementById('stockBadge').innerText = prods.length;
         const grid = document.getElementById('stockGrid');
 
@@ -1062,6 +1089,100 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
       }
     }
 
+    // Vault & Backup Management
+    function checkVaultNotice(serverProds) {
+      const alertEl = document.getElementById('vaultRestoreAlert');
+      const countSpan = document.getElementById('vaultItemCount');
+      if (!alertEl) return;
+      try {
+        const saved = localStorage.getItem('amz_crackers_seller_vault');
+        const vault = saved ? JSON.parse(saved) : [];
+        if (vault.length > 0 && serverProds.length < vault.length) {
+          alertEl.style.display = 'flex';
+          if (countSpan) countSpan.innerText = vault.length;
+        } else {
+          alertEl.style.display = 'none';
+        }
+      } catch (e) {
+        alertEl.style.display = 'none';
+      }
+    }
+
+    async function restoreProductsFromVault() {
+      try {
+        const saved = localStorage.getItem('amz_crackers_seller_vault');
+        const vault = saved ? JSON.parse(saved) : [];
+        if (vault.length === 0) {
+          alert('No local backup found in this browser.');
+          return;
+        }
+        const res = await fetch('/api/admin/restore-products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ products: vault })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Restored ${data.restoredCount} products to live store!`);
+          document.getElementById('vaultRestoreAlert').style.display = 'none';
+          await loadAdminStock();
+        } else {
+          alert(data.error || 'Restore failed');
+        }
+      } catch (err) {
+        alert('Server connection error during restore.');
+      }
+    }
+
+    function exportProductsBackup() {
+      fetch('/api/products')
+        .then(res => res.json())
+        .then(data => {
+          const prods = data.products || [];
+          const blob = new Blob([JSON.stringify(prods, null, 2)], { type: 'application/json' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'products.json';
+          a.click();
+          showToast('products.json backup downloaded successfully!');
+        })
+        .catch(() => alert('Could not export products.'));
+    }
+
+    async function importProductsBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(evt) {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          if (!Array.isArray(parsed)) throw new Error('Invalid JSON format');
+          const res = await fetch('/api/admin/restore-products', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ products: parsed })
+          });
+          const data = await res.json();
+          if (data.success) {
+            localStorage.setItem('amz_crackers_seller_vault', JSON.stringify(parsed));
+            showToast(`Successfully imported ${data.restoredCount} products!`);
+            await loadAdminStock();
+          } else {
+            alert(data.error || 'Import failed.');
+          }
+        } catch (err) {
+          alert('Failed to read backup file: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
     // Multi-Photo Preview & Canvas Compression
     let uploadedPhotos = [];
 
@@ -1086,7 +1207,7 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-            const maxDim = 1200;
+            const maxDim = 800;
             if (width > maxDim || height > maxDim) {
               if (width > height) {
                 height = Math.round((height * maxDim) / width);
@@ -1100,7 +1221,7 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            const compressed = canvas.toDataURL('image/jpeg', 0.85);
+            const compressed = canvas.toDataURL('image/jpeg', 0.75);
 
             uploadedPhotos.push(compressed);
             processedCount++;

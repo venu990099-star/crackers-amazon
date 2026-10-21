@@ -21,6 +21,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'crackers.db')
 STATIC_DIR = os.path.dirname(os.path.abspath(__file__))
+PRODUCTS_JSON_PATH = os.path.join(STATIC_DIR, 'products.json')
 
 # Active admin session tokens (In-memory token store: { token: { username, expires } })
 ADMIN_SESSIONS = {}
@@ -35,14 +36,54 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def sync_products_to_json():
+    """Exports all products from SQLite to products.json so they persist across restarts."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM products ORDER BY created_at DESC')
+        rows = cursor.fetchall()
+        prods = []
+        for r in rows:
+            images = []
+            try:
+                if 'images_json' in r.keys() and r['images_json']:
+                    images = json.loads(r['images_json'])
+            except Exception:
+                images = []
+            if not images and r['image']:
+                images = [r['image']]
+            
+            prods.append({
+                'id': r['id'],
+                'name': r['name'],
+                'category': r['category'],
+                'mrp': r['mrp'],
+                'price': r['price'],
+                'specs': r['specs'],
+                'image': r['image'],
+                'images': images,
+                'badge': r['badge'] if 'badge' in r.keys() and r['badge'] else '',
+                'description': r['description'] if 'description' in r.keys() and r['description'] else '',
+                'inStock': bool(r['in_stock']),
+                'createdAt': r['created_at']
+            })
+        conn.close()
+        with open(PRODUCTS_JSON_PATH, 'w', encoding='utf-8') as f:
+            json.dump(prods, f, indent=2)
+        print(f"[*] Synced {len(prods)} products to {PRODUCTS_JSON_PATH}")
+    except Exception as e:
+        print(f"[!] Error syncing products to JSON: {e}")
+
 def save_base64_image(b64_string, prefix="img"):
-    """Saves a base64 image data URL to static/images and returns the relative path."""
+    """Saves a base64 image data URL to static/images and returns data URL or path."""
     if not b64_string or not isinstance(b64_string, str):
         return ""
     if not b64_string.startswith("data:image/"):
         return b64_string  # Already a relative path or external URL
     
     try:
+        # Also write file to disk if possible
         header, encoded = b64_string.split(",", 1)
         ext = "jpg"
         if "png" in header:
@@ -57,10 +98,14 @@ def save_base64_image(b64_string, prefix="img"):
         filepath = os.path.join(images_dir, filename)
         with open(filepath, "wb") as f:
             f.write(file_bytes)
+        
+        # If image size is compact (under 1.5MB), return base64 data URL so it NEVER breaks when Render resets disk!
+        if len(b64_string) < 1500000:
+            return b64_string
         return f"images/{filename}"
     except Exception as e:
         print(f"[!] Error saving base64 image: {e}")
-        return b64_string  # Fallback to raw string if write fails
+        return b64_string
 
 def init_db():
     conn = get_db()
@@ -152,81 +197,105 @@ def init_db():
                        ('admin', salt, pwd_hash))
         print(f"[*] Initialized Admin User: admin (Default password: {default_pwd})")
 
-    # Seed default Sivakasi Diwali products if none exist
+    # Load persistent products from products.json or default seed
     cursor.execute('SELECT COUNT(*) FROM products')
     p_count = cursor.fetchone()[0]
     if p_count == 0:
-        default_prods = [
-            (
-                'prod-sky-50',
-                'Standard 50-Shot Celebration Sky Cake',
-                'aerial',
-                1800,
-                850,
-                '50 Multi-Colour Shots (120ft Elevation)',
-                'images/aerial-shots.jpg',
-                json.dumps(['images/aerial-shots.jpg', 'images/gift-box.jpg', 'images/hero-banner.jpg']),
-                'bestseller',
-                'Direct Sivakasi wholesale 50-shot aerial cake. Sky elevation above 120ft with brilliant gold strobes, crackling chrysanthemums, and emerald green palm bursts. Safety fuse included. Dispatched directly from Kengeri Central Warehouse.',
-                1
-            ),
-            (
-                'prod-spark-mega',
-                'Electric Sparklers Deluxe (50cm Jumbo Pack)',
-                'sparklers',
-                400,
-                180,
-                'Pack of 10 Jumbo Sparklers (50cm)',
-                'images/gift-box.jpg',
-                json.dumps(['images/gift-box.jpg', 'images/hero-banner.jpg']),
-                'amazon_choice',
-                'Long-lasting bright white and golden sparklers. Specially formulated for family celebrations and kids safety. Burns evenly with minimal smoke for up to 90 seconds per rod.',
-                1
-            ),
-            (
-                'prod-flower-tri',
-                'Special Tri-Colour Deluxe Flower Pots (Anar)',
-                'flowerpots',
-                550,
-                260,
-                '1 Box of 10 Large Pots',
-                'images/gift-box.jpg',
-                json.dumps(['images/gift-box.jpg', 'images/aerial-shots.jpg']),
-                'deal',
-                'Extra-high fountain reaching up to 15 feet. Multi-stage transformation from silver sparks to golden shower and green crackling tips. Made with premium Sivakasi barium-free formula.',
-                1
-            ),
-            (
-                'prod-chakkar-deluxe',
-                'Spinning Deluxe Wheel Ground Chakkars',
-                'chakkars',
-                350,
-                160,
-                '1 Box of 10 Wheel Chakkars',
-                'images/gift-box.jpg',
-                json.dumps(['images/gift-box.jpg']),
-                'recommended',
-                'High-speed spinning ground wheels with bright silver and red ring projections. Smooth rotation without jumping or sticking on Bangalore paved surfaces.',
-                1
-            ),
-            (
-                'prod-combo-bumper',
-                'Bangalore Mega Family Diwali Bumper Box (35 Items)',
-                'combos',
-                4500,
-                1999,
-                '35 Assorted Festive Varieties',
-                'images/gift-box.jpg',
-                json.dumps(['images/gift-box.jpg', 'images/amazon-diwali-banner.jpg', 'images/aerial-shots.jpg']),
-                'bestseller',
-                'Complete all-in-one Diwali celebration hamper for the entire family. Contains Sky shots, Sparklers, Anars, Chakkars, Roll caps, and Novelty crackers. 100% genuine Sivakasi wholesale pack.',
-                1
-            )
-        ]
-        cursor.executemany('''
-            INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, in_stock)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', default_prods)
+        loaded_from_json = False
+        if os.path.exists(PRODUCTS_JSON_PATH):
+            try:
+                with open(PRODUCTS_JSON_PATH, 'r', encoding='utf-8') as f:
+                    saved_prods = json.load(f)
+                if isinstance(saved_prods, list) and len(saved_prods) > 0:
+                    for p in saved_prods:
+                        imgs = p.get('images', [p.get('image', '')])
+                        imgs_json = json.dumps(imgs)
+                        cursor.execute('''
+                            INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, in_stock)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ''', (
+                            p['id'], p['name'], p['category'], int(p.get('mrp', p['price'] * 2)), int(p['price']),
+                            p.get('specs', ''), p.get('image', ''), imgs_json,
+                            p.get('badge', ''), p.get('description', ''),
+                            1 if p.get('inStock', True) else 0
+                        ))
+                    print(f"[*] Loaded {len(saved_prods)} products from products.json into database.")
+                    loaded_from_json = True
+            except Exception as e:
+                print(f"[!] Could not load products.json: {e}")
+
+        if not loaded_from_json:
+            default_prods = [
+                (
+                    'prod-sky-50',
+                    'Standard 50-Shot Celebration Sky Cake',
+                    'aerial',
+                    1800,
+                    850,
+                    '50 Multi-Colour Shots (120ft Elevation)',
+                    'images/aerial-shots.jpg',
+                    json.dumps(['images/aerial-shots.jpg', 'images/gift-box.jpg', 'images/hero-banner.jpg']),
+                    'bestseller',
+                    'Direct Sivakasi wholesale 50-shot aerial cake. Sky elevation above 120ft with brilliant gold strobes, crackling chrysanthemums, and emerald green palm bursts. Safety fuse included. Dispatched directly from Kengeri Central Warehouse.',
+                    1
+                ),
+                (
+                    'prod-spark-mega',
+                    'Electric Sparklers Deluxe (50cm Jumbo Pack)',
+                    'sparklers',
+                    400,
+                    180,
+                    'Pack of 10 Jumbo Sparklers (50cm)',
+                    'images/gift-box.jpg',
+                    json.dumps(['images/gift-box.jpg', 'images/hero-banner.jpg']),
+                    'amazon_choice',
+                    'Long-lasting bright white and golden sparklers. Specially formulated for family celebrations and kids safety. Burns evenly with minimal smoke for up to 90 seconds per rod.',
+                    1
+                ),
+                (
+                    'prod-flower-tri',
+                    'Special Tri-Colour Deluxe Flower Pots (Anar)',
+                    'flowerpots',
+                    550,
+                    260,
+                    '1 Box of 10 Large Pots',
+                    'images/gift-box.jpg',
+                    json.dumps(['images/gift-box.jpg', 'images/aerial-shots.jpg']),
+                    'deal',
+                    'Extra-high fountain reaching up to 15 feet. Multi-stage transformation from silver sparks to golden shower and green crackling tips. Made with premium Sivakasi barium-free formula.',
+                    1
+                ),
+                (
+                    'prod-chakkar-deluxe',
+                    'Spinning Deluxe Wheel Ground Chakkars',
+                    'chakkars',
+                    350,
+                    160,
+                    '1 Box of 10 Wheel Chakkars',
+                    'images/gift-box.jpg',
+                    json.dumps(['images/gift-box.jpg']),
+                    'recommended',
+                    'High-speed spinning ground wheels with bright silver and red ring projections. Smooth rotation without jumping or sticking on Bangalore paved surfaces.',
+                    1
+                ),
+                (
+                    'prod-combo-bumper',
+                    'Bangalore Mega Family Diwali Bumper Box (35 Items)',
+                    'combos',
+                    4500,
+                    1999,
+                    '35 Assorted Festive Varieties',
+                    'images/gift-box.jpg',
+                    json.dumps(['images/gift-box.jpg', 'images/amazon-diwali-banner.jpg', 'images/aerial-shots.jpg']),
+                    'bestseller',
+                    'Complete all-in-one Diwali celebration hamper for the entire family. Contains Sky shots, Sparklers, Anars, Chakkars, Roll caps, and Novelty crackers. 100% genuine Sivakasi wholesale pack.',
+                    1
+                )
+            ]
+            cursor.executemany('''
+                INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, in_stock)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', default_prods)
 
         default_reviews = [
             ('rev-1', 'prod-sky-50', 'Venkatesh Rao, Kengeri Satellite Town', 5, 'Super sky elevation and colours!', 'Received the box in good condition. Dispatched directly from Kengeri warehouse in under 3 hours. Sound was deep and crackling colours lasted long in the sky.'),
@@ -721,7 +790,50 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             conn.close()
 
             print(f"[+] Product added: {name} (₹{price}) with {len(saved_image_urls)} images, badge: '{badge}'")
+            sync_products_to_json()
             self.send_json({'success': True, 'id': prod_id})
+            return
+
+        # 3b. API: Restore Products from Backup (Private Admin)
+        elif path == '/api/admin/restore-products':
+            if not verify_token(self.headers):
+                self.send_error_json('Unauthorized', status=401)
+                return
+
+            restored_list = body.get('products', [])
+            if not isinstance(restored_list, list) or len(restored_list) == 0:
+                self.send_error_json('No valid products found in restore payload')
+                return
+
+            conn = get_db()
+            cursor = conn.cursor()
+            restored_count = 0
+            for p in restored_list:
+                p_id = p.get('id') or f"prod-{secrets.token_hex(6)}"
+                name = p.get('name', '').strip()
+                if not name:
+                    continue
+                category = p.get('category', 'aerial')
+                mrp = int(p.get('mrp', p.get('price', 100) * 2))
+                price = int(p.get('price', 100))
+                specs = p.get('specs', '')
+                image = p.get('image', '')
+                imgs = p.get('images', [image]) if isinstance(p.get('images'), list) else [image]
+                badge = p.get('badge', '')
+                description = p.get('description', '')
+                in_stock = 1 if p.get('inStock', True) else 0
+
+                cursor.execute('''
+                    INSERT OR REPLACE INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, in_stock)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (p_id, name, category, mrp, price, specs, image, json.dumps(imgs), badge, description, in_stock))
+                restored_count += 1
+
+            conn.commit()
+            conn.close()
+            sync_products_to_json()
+            print(f"[*] Restored {restored_count} products into database and synced to products.json")
+            self.send_json({'success': True, 'restoredCount': restored_count})
             return
 
         else:
@@ -816,6 +928,7 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
 
             conn.close()
+            sync_products_to_json()
             print(f"[*] Product {prod_id} updated: {updates}")
             self.send_json({'success': True})
             return
@@ -841,6 +954,8 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             cursor.execute('DELETE FROM products WHERE id = ?', (prod_id,))
             conn.commit()
             conn.close()
+            sync_products_to_json()
+            print(f"[*] Product {prod_id} deleted by seller and removed from products.json")
             self.send_json({'success': True})
             return
 
