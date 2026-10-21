@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">Amazon Crackers Bangalore | Sivakasi Direct Wholesale</title>
+  <meta name="description" content="Direct Sivakasi wholesale crackers dispatched from Kengeri Central Hub, Bengaluru. Fast same-day delivery.">
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Dedicated Amazon Product Detail Page Styles */
+    body {
+      background-color: #eaeded;
+      color: #0f1111;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .product-page-main {
+      background: #fff;
+      max-width: 1450px;
+      margin: 0 auto;
+      min-height: 80vh;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    /* Breadcrumbs */
+    .amz-breadcrumb-bar {
+      padding: 0.8rem 1.5rem;
+      font-size: 0.82rem;
+      color: #565959;
+      background: #fff;
+      border-bottom: 1px solid #e7e7e7;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .amz-breadcrumb-bar a {
+      color: #007185;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .amz-breadcrumb-bar a:hover {
+      text-decoration: underline;
+      color: #c45500;
+    }
+
+    /* 3-Column Product Showcase */
+    .product-detail-layout {
+      display: grid;
+      grid-template-columns: 40% 38% 22%;
+      gap: 2rem;
+      padding: 2rem 1.5rem;
+      background: #fff;
+      border-bottom: 1px solid #e7e7e7;
+    }
+
+    /* Column 1: Gallery */
+    .p-gallery-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .p-main-img-wrap {
+      width: 100%;
+      height: 420px;
+      background: #fafafa;
+      border: 1px solid #d5d9d9;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .p-main-img-wrap img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .p-main-img-wrap:hover img {
+      transform: scale(1.08);
+    }
+
+    .p-thumb-strip {
+      display: flex;
+      gap: 0.6rem;
+      overflow-x: auto;
+      padding-bottom: 0.4rem;
+    }
+
+    .p-thumb-item {
+      width: 70px;
+      height: 70px;
+      border: 2px solid #d5d9d9;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: #fafafa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .p-thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .p-thumb-item:hover,
+    .p-thumb-item.active {
+      border-color: #e77600;
+      box-shadow: 0 0 0 2px rgba(231, 118, 0, 0.35);
+    }
+
+    /* Column 2: Info & Details */
+    .p-info-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .p-badge-tag {
+      margin-bottom: 0.6rem;
+      display: inline-block;
+    }
+
+    .p-badge-bestseller {
+      background: #e67a00;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      letter-spacing: 0.3px;
+    }
+
+    .p-badge-choice {
+      background: #232f3e;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .p-badge-choice .highlight { color: #f90; }
+
+    .p-badge-deal {
+      background: #cc0c39;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+    }
+
+    .p-badge-recommended {
+      background: #4c1d95;
+      color: #fde047;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+    }
+
+    .p-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #0f1111;
+      line-height: 1.3;
+      margin: 0.2rem 0 0.6rem;
+    }
+
+    .p-ratings-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #e7e7e7;
+      margin-bottom: 1rem;
+    }
+
+    .p-price-card {
+      background: #fbfbfb;
+      border: 1px solid #e7e7e7;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .p-deal-pill {
+      background: #cc0c39;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 0.25rem 0.6rem;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 0.4rem;
+    }
+
+    .p-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+    }
+
+    .p-price-row .curr {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .p-price-row .amount {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #0f1111;
+    }
+
+    .p-mrp-strike {
+      font-size: 0.85rem;
+      color: #565959;
+      margin-top: 0.2rem;
+    }
+
+    .p-savings-box {
+      font-size: 0.88rem;
+      color: #067d62;
+      font-weight: 700;
+      margin-top: 0.3rem;
+    }
+
+    /* Specs table */
+    .p-specs-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.2rem;
+      font-size: 0.88rem;
+    }
+
+    .p-specs-table td {
+      padding: 0.5rem 0.4rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .p-specs-table td.s-label {
+      font-weight: 700;
+      color: #565959;
+      width: 35%;
+    }
+
+    .p-specs-table td.s-val {
+      color: #0f1111;
+    }
+
+    .p-about-section h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #0f1111;
+    }
+
+    .p-about-section p {
+      font-size: 0.92rem;
+      color: #333;
+      line-height: 1.6;
+      white-space: pre-line;
+      margin: 0;
+    }
+
+    /* Column 3: Amazon Buy Box */
+    .p-buybox-col {
+      background: #fff;
+      border: 1px solid #d5d9d9;
+      border-radius: 8px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .buybox-price {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #b12704;
+      margin-bottom: 0.4rem;
+    }
+
+    .buybox-stock {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+
+    .buybox-delivery {
+      font-size: 0.84rem;
+      color: #565959;
+      line-height: 1.5;
+      margin-bottom: 1.2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .buybox-qty-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .buybox-qty-row label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #0f1111;
+    }
+
+    .buybox-qty-select {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #d5d9d9;
+      border-radius: 4px;
+      background: #f0f2f2;
+    }
+
+    .buybox-qty-select button {
+      background: none;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .buybox-qty-select span {
+      padding: 0.4rem 0.8rem;
+      background: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .btn-buybox-cart {
+      background: #ffd814;
+      border: 1px solid #fcd200;
+      border-radius: 20px;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f1111;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+      transition: all 0.15s ease;
+    }
+    .btn-buybox-cart:hover { background: #f7ca00; }
+
+    .btn-buybox-buy {
+      background: #ffa41c;
+      border: 1px solid #ff8f00;
+      border-radius: 20px;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f1111;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+      transition: all 0.15s ease;
+    }
+    .btn-buybox-buy:hover { background: #fa8900; }
+
+    .btn-buybox-whatsapp {
+      background: #25d366;
+      border: none;
+      border-radius: 20px;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+      transition: all 0.15s ease;
+    }
+    .btn-buybox-whatsapp:hover { background: #20ba5c; color: #fff; }
+
+    /* Related Products Shelf Under Main */
+    .related-products-section {
+      padding: 2.5rem 1.5rem;
+      background: #fff;
+      border-bottom: 1px solid #e7e7e7;
+    }
+
+    .related-products-section h2 {
+      font-size: 1.35rem;
+      color: #0f1111;
+      margin-bottom: 1.2rem;
+      font-weight: 700;
+    }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+    }
+
+    /* Customer Reviews Section Under Related Products */
+    .reviews-section-wrapper {
+      padding: 2.5rem 1.5rem;
+      background: #fff;
+    }
+
+    .reviews-section-wrapper h2 {
+      font-size: 1.4rem;
+      color: #0f1111;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+
+    .reviews-main-grid {
+      display: grid;
+      grid-template-columns: 32% 68%;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* Left Rating Overview & Write Review Box */
+    .rating-summary-box {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .score-banner {
+      display: flex;
+      align-items: baseline;
+      gap: 0.8rem;
+    }
+
+    .score-number {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #0f1111;
+    }
+
+    .stars-large {
+      color: #de7921;
+      font-size: 1.3rem;
+    }
+
+    .rating-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.82rem;
+      color: #007185;
+      margin-bottom: 0.4rem;
+    }
+
+    .rating-bar-track {
+      flex: 1;
+      height: 18px;
+      background: #f0f2f2;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .rating-bar-fill {
+      height: 100%;
+      background: #de7921;
+    }
+
+    .write-review-form-card {
+      background: #fbfbfb;
+      border: 1px solid #d5d9d9;
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin-top: 1.5rem;
+    }
+
+    .write-review-form-card h4 {
+      margin: 0 0 0.4rem;
+      font-size: 1.05rem;
+      color: #0f1111;
+    }
+
+    .star-picker {
+      display: flex;
+      gap: 0.3rem;
+      font-size: 1.6rem;
+      color: #ccc;
+      cursor: pointer;
+      margin: 0.4rem 0 0.8rem;
+    }
+
+    .star-picker .star.active {
+      color: #de7921;
+    }
+
+    /* Right Reviews List */
+    .reviews-list-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .customer-review-card {
+      border-bottom: 1px solid #e7e7e7;
+      padding-bottom: 1.2rem;
+    }
+
+    .rev-user-line {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0f1111;
+    }
+
+    .rev-verified-tag {
+      color: #c45500;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .rev-headline {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #0f1111;
+      margin: 0.3rem 0;
+    }
+
+    .rev-comment {
+      font-size: 0.9rem;
+      color: #333;
+      line-height: 1.5;
+      margin: 0.2rem 0;
+    }
+
+    .rev-date {
+      font-size: 0.78rem;
+      color: #565959;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .product-detail-layout {
+        grid-template-columns: 1fr 1fr;
+      }
+      .p-buybox-col {
+        grid-column: 1 / -1;
+      }
+      .related-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .reviews-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .product-detail-layout {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+      .p-main-img-wrap {
+        height: 300px;
+      }
+      .related-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Amazon Top Navigation Header -->
+  <header class="amazon-header">
+    <div class="header-main-row">
+      <!-- Amazon Logo -->
+      <a href="index.html" class="amazon-logo-box" title="Return to Amazon Crackers Home">
+        <span class="amz-brand">amazon<span class="amz-suffix">.crackers</span></span>
+        <span class="amz-tagline">bangalore dispatch</span>
+      </a>
+
+      <!-- Bangalore Delivery Pin Box -->
+      <a href="index.html" class="nav-location-box" style="text-decoration: none;">
+        <i class="fa-solid fa-location-dot location-icon"></i>
+        <div class="location-text">
+          <span class="nav-line1">Deliver to Bangalore 560060</span>
+          <span class="nav-line2">Kengeri Hub & Routes ▼</span>
+        </div>
+      </a>
+
+      <!-- Amazon Global Search Bar -->
+      <div class="amazon-search-bar">
+        <div class="search-category-select">
+          <select id="searchCategoryDropdown" onchange="handleHeaderCategory(this.value)">
+            <option value="all">All Crackers</option>
+            <option value="aerial">Sky Shots</option>
+            <option value="sparklers">Sparklers</option>
+            <option value="flowerpots">Flower Pots</option>
+            <option value="chakkars">Ground Chakkars</option>
+            <option value="kids">Kids</option>
+            <option value="combos">Combos</option>
+          </select>
+        </div>
+        <input type="text" id="globalSearchInput" placeholder="Search Amazon Crackers (e.g. 50 shots, sparkler, anar, combo)..." onkeydown="if(event.key==='Enter') executeHeaderSearch()">
+        <button class="search-submit-btn" onclick="executeHeaderSearch()" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </div>
+
+      <!-- Language selector -->
+      <div class="nav-lang-box">
+        <span class="flag-icon">🇮🇳</span>
+        <span class="nav-lang-text">EN ▼</span>
+      </div>
+
+      <!-- WhatsApp Help -->
+      <a href="https://wa.me/918431027743?text=Namaskara%20Amazon%20Crackers%2C%20I%20need%20help%20with%20an%20order" target="_blank" class="nav-orders-box" style="text-decoration: none; color: #fff;">
+        <span class="nav-line1">WhatsApp Help</span>
+        <span class="nav-line2" style="color: #25d366;"><i class="fa-brands fa-whatsapp"></i> +91 84310 27743</span>
+      </a>
+
+      <!-- Orders & Tracking -->
+      <a href="index.html#track-section" class="nav-orders-box" style="text-decoration: none; color: #fff;">
+        <span class="nav-line1">Returns</span>
+        <span class="nav-line2">& Orders 📦</span>
+      </a>
+
+      <!-- Amazon Cart Button -->
+      <div class="amazon-cart-btn" onclick="openCart()">
+        <div class="cart-icon-wrap">
+          <span class="cart-item-count" id="cartCountBadge">0</span>
+          <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+        <span class="cart-label">Cart</span>
+      </div>
+    </div>
+
+    <!-- Secondary Amazon Subnav -->
+    <div class="amazon-subnav">
+      <div class="subnav-left">
+        <a href="index.html" class="subnav-link" style="font-weight: 700;"><i class="fa-solid fa-arrow-left"></i> All Crackers Catalog</a>
+        <a href="index.html#catalog-section" class="subnav-link">Today's Deals</a>
+        <a href="index.html#combos-section" class="subnav-link">Family Combos</a>
+        <a href="https://wa.me/918431027743?text=Namaskara%20Amazon%20Crackers%2C%20I%20want%20to%20order%20crackers" target="_blank" class="subnav-link" style="color: #25d366; font-weight: 700;"><i class="fa-brands fa-whatsapp"></i> WhatsApp Order: +91 84310 27743</a>
+        <a href="index.html#track-section" class="subnav-link">Track Your Package</a>
+      </div>
+      <div class="subnav-right">
+        <span class="festive-sale-tag">🎉 Amazon Big Diwali Festival • Up to 80% OFF</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Amazon Dedicated Product Page Main Container -->
+  <main class="product-page-main">
+    
+    <!-- Breadcrumb Bar -->
+    <nav class="amz-breadcrumb-bar">
+      <a href="index.html"><i class="fa-solid fa-angle-left"></i> Back to results</a>
+      <span>|</span>
+      <a href="index.html">Amazon Crackers</a>
+      <span>&gt;</span>
+      <span id="crumbCategory" style="color: #007185; cursor: pointer;" onclick="window.location.href='index.html#catalog-section'">Crackers</span>
+      <span>&gt;</span>
+      <strong id="crumbTitle" style="color: #0f1111;">Loading Product...</strong>
+    </nav>
+
+    <!-- 1. Top Section: 3 Columns (Gallery, Information, Buy Box) -->
+    <section class="product-detail-layout" id="productLayoutContainer">
+      
+      <!-- Col 1: Photos Gallery -->
+      <div class="p-gallery-col">
+        <div class="p-main-img-wrap" id="mainImgWrap">
+          <img id="mainDisplayImg" src="" alt="Product photo" loading="eager">
+        </div>
+        <div class="p-thumb-strip" id="thumbStrip">
+          <!-- Thumbnail strip populated by JS -->
+        </div>
+        <div style="font-size: 0.8rem; color: #565959; text-align: center; margin-top: 0.5rem;">
+          <i class="fa-solid fa-shield-halved text-green"></i> 100% Genuine Box Direct from Sivakasi Factory • Dispatch via Kengeri Hub
+        </div>
+      </div>
+
+      <!-- Col 2: Details & Description -->
+      <div class="p-info-col">
+        <div id="badgeContainer" class="p-badge-tag"></div>
+        <h1 class="p-title" id="productTitle">Loading...</h1>
+        
+        <div class="p-ratings-bar">
+          <span class="stars-gold" id="productStars">★★★★★</span>
+          <span id="productRatingScore" style="font-weight: 700; color: #007185;">4.9 out of 5</span>
+          <a href="#customerReviewsSection" style="color: #007185; text-decoration: none;" id="productReviewCountLink">(18 verified ratings)</a>
+        </div>
+
+        <div class="p-price-card">
+          <span class="p-deal-pill" id="discountBadge">50% off Wholesale Rate</span>
+          <div class="p-price-row">
+            <span class="curr">₹</span>
+            <span class="amount" id="productPrice">0</span>
+          </div>
+          <div class="p-mrp-strike">
+            M.R.P.: <span style="text-decoration: line-through;" id="productMrp">₹0</span>
+          </div>
+          <div class="p-savings-box" id="productSavings">
+            You Save: ₹0 (Direct Sivakasi Factory Margin)
+          </div>
+          <div style="font-size: 0.78rem; color: #565959; margin-top: 0.4rem;">
+            Inclusive of all festival taxes • Doorstep delivery available
+          </div>
+        </div>
+
+        <!-- Specifications Table -->
+        <table class="p-specs-table">
+          <tbody>
+            <tr>
+              <td class="s-label">Product Type</td>
+              <td class="s-val"><strong id="specCategory">Sky Shots</strong></td>
+            </tr>
+            <tr>
+              <td class="s-label">Packaging / Box</td>
+              <td class="s-val" id="specPackage">1 Box Standard Pack</td>
+            </tr>
+            <tr>
+              <td class="s-label">Dispatched From</td>
+              <td class="s-val">Amazon Crackers Kengeri Central Warehouse, Bangalore</td>
+            </tr>
+            <tr>
+              <td class="s-label">Authenticity</td>
+              <td class="s-val"><i class="fa-solid fa-circle-check text-green"></i> 100% Original Sivakasi Quality Checked</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- About this item -->
+        <div class="p-about-section">
+          <h3>About this item</h3>
+          <p id="productDescription">Loading product details...</p>
+        </div>
+      </div>
+
+      <!-- Col 3: Amazon Buy Box -->
+      <div class="p-buybox-col">
+        <div class="buybox-price" id="buyBoxPrice">₹0</div>
+        <div class="buybox-stock" id="buyBoxStock">● In Stock</div>
+        
+        <div class="buybox-delivery">
+          <i class="fa-solid fa-truck-fast text-orange"></i> <strong>Express Delivery</strong> across Kengeri, Challaghatta, Chickpet, Majestic, Banashankari, Whitefield.
+          <br><span style="font-size: 0.76rem; color: #565959;">Direct dispatch from Kengeri Central Warehouse.</span>
+        </div>
+
+        <div class="buybox-qty-row">
+          <label>Quantity:</label>
+          <div class="buybox-qty-select">
+            <button onclick="changePageQty(-1)">-</button>
+            <span id="pageQtyVal">1</span>
+            <button onclick="changePageQty(1)">+</button>
+          </div>
+        </div>
+
+        <button class="btn-buybox-cart" id="btnPageAddToCart" onclick="addProductToCartFromPage()">
+          <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+        </button>
+        
+        <button class="btn-buybox-buy" id="btnPageBuyNow" onclick="buyNowFromPage()">
+          <i class="fa-solid fa-bolt"></i> Buy Now
+        </button>
+
+        <a id="btnPageWhatsApp" href="#" target="_blank" class="btn-buybox-whatsapp">
+          <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Order on WhatsApp (+91 84310 27743)
+        </a>
+
+        <div style="font-size: 0.78rem; color: #565959; margin-top: 1rem; line-height: 1.4;">
+          <i class="fa-solid fa-lock text-green"></i> Secure festival packaging.<br>
+          <i class="fa-solid fa-money-bill-wave text-green"></i> Cash on Delivery (COD) supported.
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 2. Related Products Shelf ("Customers who viewed this item also viewed") -->
+    <section class="related-products-section">
+      <h2><i class="fa-solid fa-fire text-orange"></i> Customers who viewed this item also viewed</h2>
+      <div class="related-grid" id="relatedProductsGrid">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </section>
+
+    <!-- 3. Customer Ratings & Reviews Section -->
+    <section class="reviews-section-wrapper" id="customerReviewsSection">
+      <h2>Customer Reviews & Verified Ratings</h2>
+      
+      <div class="reviews-main-grid">
+        
+        <!-- Left: Rating Breakdown & Write Review -->
+        <div class="rating-summary-box">
+          <div class="score-banner">
+            <span class="score-number" id="reviewAvgScore">4.9</span>
+            <div>
+              <div class="stars-large" id="reviewAvgStars">★★★★★</div>
+              <span style="font-size: 0.85rem; color: #565959;" id="reviewTotalCount">18 customer ratings</span>
+            </div>
+          </div>
+
+          <!-- Rating breakdown bars -->
+          <div>
+            <div class="rating-bar-row">
+              <span>5 star</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 90%;"></div></div>
+              <span>90%</span>
+            </div>
+            <div class="rating-bar-row">
+              <span>4 star</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 8%;"></div></div>
+              <span>8%</span>
+            </div>
+            <div class="rating-bar-row">
+              <span>3 star</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 2%;"></div></div>
+              <span>2%</span>
+            </div>
+            <div class="rating-bar-row">
+              <span>2 star</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+              <span>0%</span>
+            </div>
+            <div class="rating-bar-row">
+              <span>1 star</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%;"></div></div>
+              <span>0%</span>
+            </div>
+          </div>
+
+          <!-- Write a Customer Review Form -->
+          <div class="write-review-form-card">
+            <h4>Review this product</h4>
+            <p style="font-size: 0.82rem; color: #565959; margin: 0 0 0.8rem;">Share your thoughts with other Bangalore festival shoppers:</p>
+            
+            <form onsubmit="handleReviewSubmission(event)">
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #333; display: block;">Your Name *</label>
+                <input type="text" id="reviewerName" required placeholder="e.g. Ramesh Kumar, Kengeri" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; box-sizing: border-box;">
+              </div>
+
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #333; display: block;">Your Overall Rating *</label>
+                <div class="star-picker" id="starPicker">
+                  <span class="star active" data-val="1" onclick="selectStar(1)">★</span>
+                  <span class="star active" data-val="2" onclick="selectStar(2)">★</span>
+                  <span class="star active" data-val="3" onclick="selectStar(3)">★</span>
+                  <span class="star active" data-val="4" onclick="selectStar(4)">★</span>
+                  <span class="star active" data-val="5" onclick="selectStar(5)">★</span>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #333; display: block;">Review Headline (Optional)</label>
+                <input type="text" id="reviewerHeadline" placeholder="e.g. Super sound, fast Kengeri delivery!" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; box-sizing: border-box;">
+              </div>
+
+              <div style="margin-bottom: 1rem;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #333; display: block;">Write your review *</label>
+                <textarea id="reviewerComment" required rows="3" placeholder="Tell other customers how this cracker performed..." style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; box-sizing: border-box;"></textarea>
+              </div>
+
+              <button type="submit" class="amz-btn-yellow" style="width: 100%; padding: 0.65rem; font-weight: 700;">
+                Submit Customer Review
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right: Reviews List -->
+        <div class="reviews-list-wrap" id="reviewsListContainer">
+          <!-- Rendered dynamically by JS -->
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Amazon Footer -->
+  <footer class="amazon-footer">
+    <a href="#" class="back-to-top-btn" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;">Back to top</a>
+    
+    <div class="footer-links-container">
+      <div class="container footer-cols-grid">
+        <div class="footer-col">
+          <h4>Get to Know Us</h4>
+          <ul>
+            <li><a href="index.html">About Amazon Crackers Bangalore</a></li>
+            <li><a href="index.html">Direct Sivakasi Factory Tie-up</a></li>
+            <li><a href="index.html">Kengeri Central Dispatch Hub</a></li>
+            <li><a href="index.html">Cracker Safety & Festival Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Delivery Corridors</h4>
+          <ul>
+            <li><a href="index.html">Kengeri Satellite Town & Metro</a></li>
+            <li><a href="index.html">Challaghatta & RV College</a></li>
+            <li><a href="index.html">Chickpet Wholesale Market</a></li>
+            <li><a href="index.html">Majestic & Gandhinagar</a></li>
+            <li><a href="index.html">Banashankari 1st, 2nd, 3rd Stage</a></li>
+            <li><a href="index.html">Whitefield & IT Corridor</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Bulk & Wholesale</h4>
+          <ul>
+            <li><a href="https://wa.me/918431027743?text=Hello%20Amazon%20Crackers%2C%20I%20need%20Apartment%20Society%20Bulk%20Supply" target="_blank">Apartment Society Bulk Supply</a></li>
+            <li><a href="https://wa.me/918431027743?text=Hello%20Amazon%20Crackers%2C%20I%20need%20Corporate%20Diwali%20Gifting" target="_blank">Corporate Diwali Gifting</a></li>
+            <li><a href="https://wa.me/918431027743?text=Hello%20Amazon%20Crackers%2C%20I%20want%20Wholesale%20Distribution%20Price%20List" target="_blank">Wholesale Distribution Bangalore</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Let Us Help You</h4>
+          <ul>
+            <li><a href="index.html#track-section">Your Account & Order Status</a></li>
+            <li><a href="index.html#track-section">Live Package Tracking</a></li>
+            <li><a href="https://wa.me/918431027743?text=Hello%20Amazon%20Crackers%20Support" target="_blank" style="color: #25d366; font-weight: 700;"><i class="fa-brands fa-whatsapp"></i> WhatsApp Help Desk: +91 84310 27743</a></li>
+            <li><a href="index.html#track-section">Kengeri Hub Dispatch: 7:30 AM - 11 PM</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <div class="container footer-bottom-inner">
+        <div class="bottom-logo">
+          <span class="amz-text-small">amazon<span class="amz-sub">.crackers</span></span>
+        </div>
+        <div class="bottom-legal">
+          <p>© 2026 Amazon Crackers Bangalore. Direct Sivakasi Wholesale Dispatch Hub, Kengeri, Bengaluru 560060.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Slide-Out Cart Drawer -->
+  <div class="cart-drawer-overlay" id="cartOverlay" onclick="closeCart()"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header">
+      <div class="cart-title-wrap">
+        <i class="fa-solid fa-cart-shopping text-orange"></i>
+        <h3>Shopping Cart</h3>
+        <span class="cart-items-counter" id="drawerItemsCount">(0 items)</span>
+      </div>
+      <button class="close-cart-btn" onclick="closeCart()" aria-label="Close Cart"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="cart-drawer-items" id="cartItemsList">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="drawer-subtotal-row">
+        <span>Subtotal:</span>
+        <span class="subtotal-amount" id="drawerSubtotal">₹0</span>
+      </div>
+      <button class="amz-btn-yellow w-100" onclick="openCheckout()">Proceed to Buy (COD)</button>
+    </div>
+  </aside>
+
+  <!-- Amazon Multi-Step Checkout Modal -->
+  <div class="modal-backdrop" id="checkoutModalBackdrop" onclick="if(event.target===this) closeCheckout()">
+    <div class="modal-card checkout-modal">
+      <div class="checkout-header">
+        <div class="checkout-logo">
+          <span class="amz-text">amazon<span class="amz-sub">.crackers</span></span>
+        </div>
+        <button class="modal-close-icon" onclick="closeCheckout()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="checkout-body">
+        <form id="checkoutForm" onsubmit="handlePlaceOrder(event)">
+          <div class="form-section">
+            <div class="section-badge">1</div>
+            <div class="section-content">
+              <h4>Delivery Address in Bengaluru</h4>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Full Name *</label>
+                  <input type="text" id="custName" required placeholder="e.g. Ramesh Kumar">
+                </div>
+                <div class="form-group">
+                  <label>10-Digit Mobile Number *</label>
+                  <input type="tel" id="custPhone" required placeholder="e.g. 9845012345" pattern="[0-9]{10}">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Locality in Bangalore *</label>
+                  <select id="custLocality" required>
+                    <option value="Kengeri (Central Hub)">Kengeri (Central Hub)</option>
+                    <option value="Challaghatta">Challaghatta (Near RV College)</option>
+                    <option value="Chickpet">Chickpet (Wholesale Market)</option>
+                    <option value="Majestic">Majestic & Gandhinagar</option>
+                    <option value="Banashankari">Banashankari</option>
+                    <option value="Whitefield">Whitefield & IT Corridor</option>
+                    <option value="Other Bangalore Area">Other Bangalore Area</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Pincode *</label>
+                  <input type="text" id="custPincode" required value="560060" placeholder="e.g. 560060">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Flat / House No. / Street Address *</label>
+                <textarea id="custAddress" required rows="2" placeholder="e.g. Flat 302, Green View Apts, 5th Cross"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="section-badge">2</div>
+            <div class="section-content">
+              <h4>Payment Method</h4>
+              <div class="payment-option selected">
+                <input type="radio" id="payCod" name="paymentMethod" value="Cash on Delivery (COD)" checked>
+                <label for="payCod">
+                  <strong>Cash on Delivery (COD) / Pay on Delivery (UPI)</strong>
+                  <p class="text-muted">Pay securely at your doorstep via Cash or GPay / PhonePe UPI when your package arrives.</p>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="section-badge">3</div>
+            <div class="section-content">
+              <h4>Order Summary</h4>
+              <div style="font-size: 0.95rem; margin-bottom: 0.8rem;">
+                Total Amount: <strong style="color: #b12704; font-size: 1.2rem;" id="checkoutTotalPayable">₹0</strong>
+              </div>
+              <button type="submit" class="amz-btn-yellow w-100 btn-place-order">Place Your Order</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Success Modal -->
+  <div class="modal-backdrop" id="orderSuccessModalBackdrop">
+    <div class="modal-card success-card">
+      <div class="amz-success-header">
+        <i class="fa-solid fa-circle-check text-green"></i>
+        <h2>Order placed, thank you!</h2>
+        <p>Confirmation has been recorded. Dispatched from <strong>Kengeri Central Warehouse</strong>.</p>
+      </div>
+
+      <div class="order-id-badge">
+        <span>Order ID:</span>
+        <strong id="createdOrderId">BLR-XXXX</strong>
+      </div>
+
+      <div class="success-actions" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem;">
+        <button class="amz-btn-whatsapp" onclick="sendOrderSummaryToWhatsapp()">
+          <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp (+91 84310 27743)
+        </button>
+        <button class="btn btn-outline" onclick="window.location.href='index.html'">Continue Shopping</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Floating 24x7 WhatsApp Button -->
+  <a href="https://wa.me/918431027743?text=Namaskara%20Amazon%20Crackers%2C%20I%20want%20to%20order%20crackers" target="_blank" class="floating-whatsapp-btn" title="Chat on WhatsApp (+91 84310 27743)">
+    <i class="fa-brands fa-whatsapp"></i>
+    <span>Order on WhatsApp</span>
+  </a>
+
+  <script src="product.js"></script>
+</body>
+</html>

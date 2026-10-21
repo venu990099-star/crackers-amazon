@@ -152,6 +152,94 @@ def init_db():
                        ('admin', salt, pwd_hash))
         print(f"[*] Initialized Admin User: admin (Default password: {default_pwd})")
 
+    # Seed default Sivakasi Diwali products if none exist
+    cursor.execute('SELECT COUNT(*) FROM products')
+    p_count = cursor.fetchone()[0]
+    if p_count == 0:
+        default_prods = [
+            (
+                'prod-sky-50',
+                'Standard 50-Shot Celebration Sky Cake',
+                'aerial',
+                1800,
+                850,
+                '50 Multi-Colour Shots (120ft Elevation)',
+                'images/aerial-shots.jpg',
+                json.dumps(['images/aerial-shots.jpg', 'images/gift-box.jpg', 'images/hero-banner.jpg']),
+                'bestseller',
+                'Direct Sivakasi wholesale 50-shot aerial cake. Sky elevation above 120ft with brilliant gold strobes, crackling chrysanthemums, and emerald green palm bursts. Safety fuse included. Dispatched directly from Kengeri Central Warehouse.',
+                1
+            ),
+            (
+                'prod-spark-mega',
+                'Electric Sparklers Deluxe (50cm Jumbo Pack)',
+                'sparklers',
+                400,
+                180,
+                'Pack of 10 Jumbo Sparklers (50cm)',
+                'images/gift-box.jpg',
+                json.dumps(['images/gift-box.jpg', 'images/hero-banner.jpg']),
+                'amazon_choice',
+                'Long-lasting bright white and golden sparklers. Specially formulated for family celebrations and kids safety. Burns evenly with minimal smoke for up to 90 seconds per rod.',
+                1
+            ),
+            (
+                'prod-flower-tri',
+                'Special Tri-Colour Deluxe Flower Pots (Anar)',
+                'flowerpots',
+                550,
+                260,
+                '1 Box of 10 Large Pots',
+                'images/gift-box.jpg',
+                json.dumps(['images/gift-box.jpg', 'images/aerial-shots.jpg']),
+                'deal',
+                'Extra-high fountain reaching up to 15 feet. Multi-stage transformation from silver sparks to golden shower and green crackling tips. Made with premium Sivakasi barium-free formula.',
+                1
+            ),
+            (
+                'prod-chakkar-deluxe',
+                'Spinning Deluxe Wheel Ground Chakkars',
+                'chakkars',
+                350,
+                160,
+                '1 Box of 10 Wheel Chakkars',
+                'images/gift-box.jpg',
+                json.dumps(['images/gift-box.jpg']),
+                'recommended',
+                'High-speed spinning ground wheels with bright silver and red ring projections. Smooth rotation without jumping or sticking on Bangalore paved surfaces.',
+                1
+            ),
+            (
+                'prod-combo-bumper',
+                'Bangalore Mega Family Diwali Bumper Box (35 Items)',
+                'combos',
+                4500,
+                1999,
+                '35 Assorted Festive Varieties',
+                'images/gift-box.jpg',
+                json.dumps(['images/gift-box.jpg', 'images/amazon-diwali-banner.jpg', 'images/aerial-shots.jpg']),
+                'bestseller',
+                'Complete all-in-one Diwali celebration hamper for the entire family. Contains Sky shots, Sparklers, Anars, Chakkars, Roll caps, and Novelty crackers. 100% genuine Sivakasi wholesale pack.',
+                1
+            )
+        ]
+        cursor.executemany('''
+            INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, in_stock)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', default_prods)
+
+        default_reviews = [
+            ('rev-1', 'prod-sky-50', 'Venkatesh Rao, Kengeri Satellite Town', 5, 'Super sky elevation and colours!', 'Received the box in good condition. Dispatched directly from Kengeri warehouse in under 3 hours. Sound was deep and crackling colours lasted long in the sky.'),
+            ('rev-2', 'prod-sky-50', 'Priya Sharma, Banashankari 2nd Stage', 5, 'Best festival experience!', 'Every single shot burst with amazing green and golden stars. Kids and neighbors were thrilled.'),
+            ('rev-3', 'prod-spark-mega', 'Anand Kumar, Challaghatta', 5, 'Safe and long-lasting sparklers', 'Burns for more than a minute with zero bad smell. Kids loved it!'),
+            ('rev-4', 'prod-combo-bumper', 'Deepak M., Whitefield ITPL', 5, 'Value for money Diwali combo', 'Direct Sivakasi wholesale price. Easily worth 4500 in retail shops.')
+        ]
+        cursor.executemany('''
+            INSERT INTO reviews (id, product_id, customer_name, rating, title, comment)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', default_reviews)
+        print("[*] Seeded default Sivakasi Diwali products & reviews.")
+
     conn.commit()
     conn.close()
 
@@ -405,6 +493,11 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
         # 4. Routing: Serve Private Admin Portal at /admin or /admin/
         elif path in ('/admin', '/admin/', '/seller-portal', '/seller-portal/'):
             self.serve_file(os.path.join(STATIC_DIR, 'seller-portal.html'))
+            return
+
+        # 4b. Routing: Serve Product Page at /product or /product/
+        elif path in ('/product', '/product/'):
+            self.serve_file(os.path.join(STATIC_DIR, 'product.html'))
             return
 
         # 5. Static Files (HTML, CSS, JS, Images)
