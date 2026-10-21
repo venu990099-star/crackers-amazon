@@ -15,6 +15,7 @@ import hashlib
 import time
 import secrets
 import mimetypes
+import base64
 from urllib.parse import urlparse, parse_qs
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
@@ -34,6 +35,33 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def save_base64_image(b64_string, prefix="img"):
+    """Saves a base64 image data URL to static/images and returns the relative path."""
+    if not b64_string or not isinstance(b64_string, str):
+        return ""
+    if not b64_string.startswith("data:image/"):
+        return b64_string  # Already a relative path or external URL
+    
+    try:
+        header, encoded = b64_string.split(",", 1)
+        ext = "jpg"
+        if "png" in header:
+            ext = "png"
+        elif "webp" in header:
+            ext = "webp"
+        
+        file_bytes = base64.b64decode(encoded)
+        filename = f"upload_{prefix}_{int(time.time()*1000)}_{secrets.token_hex(4)}.{ext}"
+        images_dir = os.path.join(STATIC_DIR, "images")
+        os.makedirs(images_dir, exist_ok=True)
+        filepath = os.path.join(images_dir, filename)
+        with open(filepath, "wb") as f:
+            f.write(file_bytes)
+        return f"images/{filename}"
+    except Exception as e:
+        print(f"[!] Error saving base64 image: {e}")
+        return b64_string  # Fallback to raw string if write fails
+
 def init_db():
     conn = get_db()
     cursor = conn.cursor()
@@ -48,10 +76,27 @@ def init_db():
             price INTEGER NOT NULL,
             specs TEXT,
             image TEXT NOT NULL,
+            images_json TEXT DEFAULT '[]',
+            badge TEXT DEFAULT '',
+            description TEXT DEFAULT '',
             in_stock INTEGER DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+
+    # Safe migrations for existing products table
+    try:
+        cursor.execute("ALTER TABLE products ADD COLUMN images_json TEXT DEFAULT '[]'")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE products ADD COLUMN badge TEXT DEFAULT ''")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE products ADD COLUMN description TEXT DEFAULT ''")
+    except sqlite3.OperationalError:
+        pass
     
     # Orders table
     cursor.execute('''
@@ -71,6 +116,19 @@ def init_db():
             status TEXT DEFAULT 'received',
             live_location TEXT,
             estimated_delivery TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # Customer Reviews table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS reviews (
+            id TEXT PRIMARY KEY,
+            product_id TEXT NOT NULL,
+            customer_name TEXT NOT NULL,
+            rating INTEGER NOT NULL,
+            title TEXT,
+            comment TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
@@ -157,6 +215,25 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             rows = cursor.fetchall()
             products = []
             for r in rows:
+                p_id = r['id']
+                cursor.execute('SELECT AVG(rating) as avg_rating, COUNT(*) as cnt FROM reviews WHERE product_id = ?', (p_id,))
+                rev_summary = cursor.fetchone()
+                avg_rating = round(rev_summary['avg_rating'], 1) if rev_summary and rev_summary['avg_rating'] else 4.9
+                rev_cnt = rev_summary['cnt'] if rev_summary and rev_summary['cnt'] else 0
+
+                images = []
+                try:
+                    raw_images = r['images_json'] if 'images_json' in r.keys() and r['images_json'] else ''
+                    if raw_images:
+                        images = json.loads(raw_images)
+                except Exception:
+                    images = []
+                if not images and r['image']:
+                    images = [r['image']]
+
+                badge = r['badge'] if 'badge' in r.keys() and r['badge'] else ''
+                description = r['description'] if 'description' in r.keys() and r['description'] else ''
+
                 products.append({
                     'id': r['id'],
                     'name': r['name'],
@@ -165,12 +242,92 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
                     'price': r['price'],
                     'specs': r['specs'],
                     'image': r['image'],
+                    'images': images,
+                    'badge': badge,
+                    'description': description,
+                    'rating': avg_rating,
+                    'reviewCount': rev_cnt,
                     'inStock': bool(r['in_stock']),
                     'createdAt': r['created_at']
                 })
             conn.close()
             self.send_json({'products': products, 'success': True})
             return
+
+        # 1b. API: Product Detail & Reviews (Public)
+        elif path.startswith('/api/products/'):
+            subpath = path[len('/api/products/'):].strip()
+            if '/reviews' in subpath:
+                p_id = subpath.split('/reviews')[0].strip()
+                conn = get_db()
+                cursor = conn.cursor()
+                cursor.execute('SELECT * FROM reviews WHERE product_id = ? ORDER BY created_at DESC', (p_id,))
+                rev_rows = cursor.fetchall()
+                reviews_list = [dict(rev) for rev in rev_rows]
+                cursor.execute('SELECT AVG(rating) as avg_rating, COUNT(*) as cnt FROM reviews WHERE product_id = ?', (p_id,))
+                rev_summary = cursor.fetchone()
+                conn.close()
+                avg_rating = round(rev_summary['avg_rating'], 1) if rev_summary and rev_summary['avg_rating'] else 4.9
+                rev_cnt = rev_summary['cnt'] if rev_summary and rev_summary['cnt'] else 0
+                self.send_json({
+                    'success': True,
+                    'reviews': reviews_list,
+                    'avgRating': avg_rating,
+                    'reviewCount': rev_cnt
+                })
+                return
+            else:
+                p_id = subpath
+                conn = get_db()
+                cursor = conn.cursor()
+                cursor.execute('SELECT * FROM products WHERE id = ?', (p_id,))
+                r = cursor.fetchone()
+                if not r:
+                    conn.close()
+                    self.send_error_json('Product not found', status=404)
+                    return
+                cursor.execute('SELECT * FROM reviews WHERE product_id = ? ORDER BY created_at DESC', (p_id,))
+                rev_rows = cursor.fetchall()
+                reviews_list = [dict(rev) for rev in rev_rows]
+                cursor.execute('SELECT AVG(rating) as avg_rating, COUNT(*) as cnt FROM reviews WHERE product_id = ?', (p_id,))
+                rev_summary = cursor.fetchone()
+                conn.close()
+
+                avg_rating = round(rev_summary['avg_rating'], 1) if rev_summary and rev_summary['avg_rating'] else 4.9
+                rev_cnt = rev_summary['cnt'] if rev_summary and rev_summary['cnt'] else 0
+
+                images = []
+                try:
+                    raw_images = r['images_json'] if 'images_json' in r.keys() and r['images_json'] else ''
+                    if raw_images:
+                        images = json.loads(raw_images)
+                except Exception:
+                    images = []
+                if not images and r['image']:
+                    images = [r['image']]
+
+                badge = r['badge'] if 'badge' in r.keys() and r['badge'] else ''
+                description = r['description'] if 'description' in r.keys() and r['description'] else ''
+
+                prod_data = {
+                    'id': r['id'],
+                    'name': r['name'],
+                    'category': r['category'],
+                    'mrp': r['mrp'],
+                    'price': r['price'],
+                    'specs': r['specs'],
+                    'image': r['image'],
+                    'images': images,
+                    'badge': badge,
+                    'description': description,
+                    'rating': avg_rating,
+                    'reviewCount': rev_cnt,
+                    'reviews': reviews_list,
+                    'inStock': bool(r['in_stock']),
+                    'createdAt': r['created_at']
+                }
+                self.send_json({'product': prod_data, 'success': True})
+                return
 
         # 2. API: Track Order (Public)
         elif path == '/api/orders/track':
@@ -397,6 +554,33 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             self.send_json({'success': True, 'message': 'Username & password updated successfully!'})
             return
 
+        # 2c. API: Customer Submit Review (Public)
+        elif path.startswith('/api/products/') and path.endswith('/reviews'):
+            p_id = path[len('/api/products/'):-len('/reviews')].strip()
+            customer_name = body.get('customerName', '').strip() or 'Bangalore Customer'
+            rating = int(body.get('rating', 5))
+            rating = max(1, min(5, rating))
+            title = body.get('title', '').strip()
+            comment = body.get('comment', '').strip()
+
+            if not comment:
+                self.send_error_json('Please write a review comment.')
+                return
+
+            rev_id = f"rev-{secrets.token_hex(6)}"
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO reviews (id, product_id, customer_name, rating, title, comment)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (rev_id, p_id, customer_name, rating, title, comment))
+            conn.commit()
+            conn.close()
+
+            print(f"[+] Review submitted for product {p_id} by {customer_name} ({rating} stars)")
+            self.send_json({'success': True, 'reviewId': rev_id})
+            return
+
         # 3. API: Admin Add Product (Private)
         elif path == '/api/admin/products':
             if not verify_token(self.headers):
@@ -408,23 +592,42 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             mrp = int(body.get('mrp', 0))
             price = int(body.get('price', 0))
             specs = body.get('specs', '').strip()
-            image = body.get('image', '').strip()
+            badge = body.get('badge', '').strip()
+            description = body.get('description', '').strip()
+            
+            raw_images = body.get('images', [])
+            single_image = body.get('image', '').strip()
+            if not raw_images and single_image:
+                raw_images = [single_image]
+            elif isinstance(raw_images, str):
+                raw_images = [raw_images]
 
-            if not name or price <= 0 or not image:
-                self.send_error_json('Please provide product name, valid price, and photo')
+            if not name or price <= 0 or not raw_images:
+                self.send_error_json('Please provide product name, valid price, and at least one photo')
                 return
 
             prod_id = f"prod-{secrets.token_hex(6)}"
+
+            # Save base64 images to static files if needed
+            saved_image_urls = []
+            for idx, img_data in enumerate(raw_images):
+                saved_url = save_base64_image(img_data, prefix=f"{prod_id}_{idx+1}")
+                if saved_url:
+                    saved_image_urls.append(saved_url)
+
+            main_image = saved_image_urls[0] if saved_image_urls else ''
+            images_json = json.dumps(saved_image_urls)
+
             conn = get_db()
             cursor = conn.cursor()
             cursor.execute('''
-                INSERT INTO products (id, name, category, mrp, price, specs, image, in_stock)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 1)
-            ''', (prod_id, name, category, mrp, price, specs, image))
+                INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, in_stock)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+            ''', (prod_id, name, category, mrp, price, specs, main_image, images_json, badge, description))
             conn.commit()
             conn.close()
 
-            print(f"[+] Product added: {name} (₹{price})")
+            print(f"[+] Product added: {name} (₹{price}) with {len(saved_image_urls)} images, badge: '{badge}'")
             self.send_json({'success': True, 'id': prod_id})
             return
 
@@ -432,7 +635,7 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             self.send_error_json('Endpoint not found', status=404)
 
     # -------------------------------------------------------------
-    # PUT REQUEST HANDLER (Update Status, Price, Delivery Time)
+    # PUT REQUEST HANDLER (Update Status, Price, Badge, Delivery Time)
     # -------------------------------------------------------------
     def do_PUT(self):
         parsed = urlparse(self.path)
@@ -476,11 +679,16 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             self.send_json({'success': True})
             return
 
-        # Update Product Price or In-Stock Status
+        # Update Product Price, MRP, In-Stock, Badge, Description, etc.
         elif path.startswith('/api/admin/products/'):
             prod_id = path.split('/api/admin/products/')[1].strip()
             price = body.get('price')
+            mrp = body.get('mrp')
             in_stock = body.get('inStock')
+            badge = body.get('badge')
+            description = body.get('description')
+            name = body.get('name')
+            specs = body.get('specs')
 
             conn = get_db()
             cursor = conn.cursor()
@@ -489,9 +697,24 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             if price is not None:
                 updates.append("price = ?")
                 params.append(int(price))
+            if mrp is not None:
+                updates.append("mrp = ?")
+                params.append(int(mrp))
             if in_stock is not None:
                 updates.append("in_stock = ?")
                 params.append(1 if in_stock else 0)
+            if badge is not None:
+                updates.append("badge = ?")
+                params.append(badge.strip())
+            if description is not None:
+                updates.append("description = ?")
+                params.append(description.strip())
+            if name is not None:
+                updates.append("name = ?")
+                params.append(name.strip())
+            if specs is not None:
+                updates.append("specs = ?")
+                params.append(specs.strip())
 
             if updates:
                 params.append(prod_id)
@@ -500,6 +723,7 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
                 conn.commit()
 
             conn.close()
+            print(f"[*] Product {prod_id} updated: {updates}")
             self.send_json({'success': True})
             return
 

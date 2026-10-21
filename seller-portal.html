@@ -493,14 +493,19 @@
         </p>
 
         <form onsubmit="handleProductUpload(event)">
-          <!-- Photo dropzone -->
+          <!-- Multi-Photo dropzone -->
           <div class="upload-dropzone" onclick="document.getElementById('photoInput').click()">
-            <i class="fa-solid fa-image" style="font-size: 2.2rem; color: var(--amz-orange); margin-bottom: 0.5rem;"></i>
-            <h4>Click to choose photo from phone/camera</h4>
-            <span id="chosenFileName" style="font-size: 0.82rem; color: var(--text-muted);">No file chosen</span>
-            <div><img id="previewImg" class="img-preview" alt="Preview"></div>
+            <i class="fa-solid fa-images" style="font-size: 2.4rem; color: var(--amz-orange); margin-bottom: 0.5rem;"></i>
+            <h4>Click or tap to choose 1 to 5 photos from phone/laptop</h4>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0.2rem 0 0.5rem;">
+              Upload multiple box angles like Amazon (Cover Box, Inside Crackers, Effect Preview)
+            </p>
+            <span id="chosenFileCount" style="font-size: 0.85rem; font-weight: 700; color: #ff9900;">0 photos selected</span>
           </div>
-          <input type="file" id="photoInput" accept="image/*" style="display: none;" onchange="handleFilePreview(event)">
+          <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" onchange="handleMultiplePhotos(event)">
+
+          <!-- Multi-photo preview strip -->
+          <div id="multiPhotoPreviewContainer" style="display: none; margin: 1rem 0; gap: 0.8rem; flex-wrap: wrap;"></div>
 
           <div class="form-row">
             <div class="form-group">
@@ -531,13 +536,30 @@
             </div>
           </div>
 
+          <div class="form-row">
+            <div class="form-group">
+              <label><i class="fa-solid fa-award text-orange"></i> Amazon Promotional Badge</label>
+              <select id="prodBadge">
+                <option value="">None (Standard Catalog Product)</option>
+                <option value="bestseller">🏆 #1 Best Seller (Amazon Classic Orange Ribbon)</option>
+                <option value="choice">✨ Amazon's Choice (Top Recommendation)</option>
+                <option value="deal">💥 Limited Time Festival Deal</option>
+                <option value="recommended">🔥 Highly Recommended</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Packaging / Quantity Description</label>
+              <input type="text" id="prodSpecs" placeholder="e.g. 1 Box (10 Pcs) • Multicolor High Altitude">
+            </div>
+          </div>
+
           <div class="form-group">
-            <label>Packaging / Quantity Description</label>
-            <input type="text" id="prodSpecs" placeholder="e.g. 1 Box (10 Pcs) • Multicolor High Altitude">
+            <label><i class="fa-solid fa-align-left text-orange"></i> Detailed Description / About this item</label>
+            <textarea id="prodDescription" rows="3" placeholder="Describe the cracker effect, sound, box contents, Sivakasi genuine brand..." style="width: 100%; padding: 0.6rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; font-size: 0.9rem; font-family: inherit;"></textarea>
           </div>
 
           <button type="submit" class="btn-amz-yellow" style="margin-top: 0.8rem; font-size: 1.05rem;">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Real Box to Public Store
+            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Real Box & Photos to Public Store
           </button>
         </form>
       </div>
@@ -923,33 +945,83 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
           return;
         }
 
-        grid.innerHTML = prods.map(p => `
-          <div class="stock-card">
-            <img src="${p.image}" alt="${p.name}">
-            <div class="stock-info">
-              <h4>${p.name}</h4>
-              <div style="font-size: 0.82rem; color: var(--text-muted);">${p.specs || ''}</div>
-              <div style="font-size: 0.95rem; margin-top: 0.3rem;">
-                Price: <strong style="color: var(--amz-orange);">₹${p.price}</strong> 
-                <span style="font-size: 0.78rem; text-decoration: line-through; color: var(--text-muted);">MRP ₹${p.mrp}</span>
-              </div>
-              <div style="font-size: 0.78rem; margin: 0.4rem 0; color: ${p.inStock ? '#34d399' : '#fb7185'};">
-                ● ${p.inStock ? 'In Stock (Live on Store)' : 'Out of Stock'}
-              </div>
-              <div style="display: flex; gap: 0.4rem;">
-                <button class="btn-amz-yellow" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="editProductPrice('${p.id}', ${p.price})">Edit Price</button>
-                <button class="btn-logout" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="toggleStockStatus('${p.id}', ${p.inStock})">
-                  ${p.inStock ? 'Mark Out' : 'Mark In'}
-                </button>
-                <button class="btn-logout" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="deleteProduct('${p.id}')">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
+        grid.innerHTML = prods.map(p => {
+          let badgeLabel = 'No Badge';
+          let badgeColor = 'var(--text-muted)';
+          if (p.badge === 'bestseller') { badgeLabel = '🏆 #1 Best Seller'; badgeColor = '#ff9900'; }
+          else if (p.badge === 'choice') { badgeLabel = '✨ Amazon Choice'; badgeColor = '#38bdf8'; }
+          else if (p.badge === 'deal') { badgeLabel = '💥 Limited Deal'; badgeColor = '#f43f5e'; }
+          else if (p.badge === 'recommended') { badgeLabel = '🔥 Recommended'; badgeColor = '#a855f7'; }
+
+          const photoCount = (p.images && p.images.length) ? p.images.length : 1;
+
+          return `
+            <div class="stock-card">
+              <img src="${p.image}" alt="${p.name}">
+              <div class="stock-info">
+                <h4>${p.name}</h4>
+                <div style="font-size: 0.82rem; color: var(--text-muted);">${p.specs || ''}</div>
+                <div style="font-size: 0.78rem; color: #94a3b8; margin: 0.2rem 0;">📷 ${photoCount} Photo(s) Attached</div>
+                <div style="font-size: 0.95rem; margin-top: 0.3rem;">
+                  Price: <strong style="color: var(--amz-orange);">₹${p.price}</strong> 
+                  <span style="font-size: 0.78rem; text-decoration: line-through; color: var(--text-muted);">MRP ₹${p.mrp}</span>
+                </div>
+                <div style="font-size: 0.82rem; margin: 0.3rem 0; font-weight: 700; color: ${badgeColor};">
+                  Badge: ${badgeLabel}
+                </div>
+                <div style="font-size: 0.78rem; margin: 0.2rem 0 0.5rem; color: ${p.inStock ? '#34d399' : '#fb7185'};">
+                  ● ${p.inStock ? 'In Stock (Live on Store)' : 'Out of Stock'}
+                </div>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <button class="btn-amz-yellow" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="editProductBadge('${p.id}', '${p.badge || ''}')">⭐ Badge</button>
+                  <button class="btn-amz-yellow" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="editProductPrice('${p.id}', ${p.price})">Edit ₹</button>
+                  <button class="btn-logout" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="toggleStockStatus('${p.id}', ${p.inStock})">
+                    ${p.inStock ? 'Out' : 'In'}
+                  </button>
+                  <button class="btn-logout" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="deleteProduct('${p.id}')">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       } catch (e) {
         console.error(e);
+      }
+    }
+
+    async function editProductBadge(id, currentBadge) {
+      const options = "Select Amazon Promotional Badge for this product:\n\n1: None (Standard Product)\n2: #1 Best Seller (Iconic Orange Ribbon)\n3: Amazon's Choice (Top Recommendation)\n4: Limited Time Festival Deal\n5: Highly Recommended\n\nEnter number (1-5):";
+      const currentChoice = currentBadge === 'bestseller' ? '2' : (currentBadge === 'choice' ? '3' : (currentBadge === 'deal' ? '4' : (currentBadge === 'recommended' ? '5' : '1')));
+      const choice = prompt(options, currentChoice);
+      if (choice === null) return;
+
+      let newBadge = '';
+      if (choice === '2') newBadge = 'bestseller';
+      else if (choice === '3') newBadge = 'choice';
+      else if (choice === '4') newBadge = 'deal';
+      else if (choice === '5') newBadge = 'recommended';
+      else newBadge = '';
+
+      try {
+        const res = await fetch(`/api/admin/products/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ badge: newBadge })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Product badge updated! Live on your Amazon store now.');
+          loadAdminStock();
+        } else {
+          alert(data.error || 'Failed to update badge.');
+        }
+      } catch (err) {
+        alert('Server connection error.');
       }
     }
 
@@ -990,27 +1062,96 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
       }
     }
 
-    // Photo Preview & Upload
-    function handleFilePreview(event) {
-      const file = event.target.files[0];
-      if (file) {
-        document.getElementById('chosenFileName').innerText = file.name;
+    // Multi-Photo Preview & Canvas Compression
+    let uploadedPhotos = [];
+
+    function handleMultiplePhotos(event) {
+      const files = Array.from(event.target.files);
+      if (!files || files.length === 0) return;
+
+      const remainingSlots = 5 - uploadedPhotos.length;
+      if (remainingSlots <= 0) {
+        alert('Maximum 5 photos allowed per product.');
+        return;
+      }
+
+      const filesToProcess = files.slice(0, remainingSlots);
+      let processedCount = 0;
+
+      filesToProcess.forEach(file => {
         const reader = new FileReader();
         reader.onload = function(e) {
-          uploadedBase64 = e.target.result;
-          const img = document.getElementById('previewImg');
-          img.src = uploadedBase64;
-          img.style.display = 'inline-block';
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxDim = 1200;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL('image/jpeg', 0.85);
+
+            uploadedPhotos.push(compressed);
+            processedCount++;
+            if (processedCount === filesToProcess.length) {
+              renderPhotoPreviews();
+            }
+          };
+          img.src = e.target.result;
         };
         reader.readAsDataURL(file);
+      });
+    }
+
+    function removeUploadedPhoto(idx) {
+      uploadedPhotos.splice(idx, 1);
+      renderPhotoPreviews();
+    }
+
+    function renderPhotoPreviews() {
+      const container = document.getElementById('multiPhotoPreviewContainer');
+      const countSpan = document.getElementById('chosenFileCount');
+      if (!container || !countSpan) return;
+
+      if (uploadedPhotos.length === 0) {
+        container.style.display = 'none';
+        container.innerHTML = '';
+        countSpan.innerText = '0 photos selected';
+        return;
       }
+
+      countSpan.innerText = `${uploadedPhotos.length} photo(s) selected (Photo 1 is the main Amazon cover)`;
+      container.style.display = 'flex';
+
+      container.innerHTML = uploadedPhotos.map((b64, idx) => `
+        <div style="position: relative; width: 90px; height: 90px; border-radius: 6px; overflow: hidden; border: 2px solid ${idx === 0 ? '#ff9900' : '#475569'}; background: #000;">
+          <img src="${b64}" style="width: 100%; height: 100%; object-fit: cover;">
+          <span style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.75); color: #fff; font-size: 0.65rem; text-align: center; padding: 2px 0;">
+            ${idx === 0 ? '★ Cover' : `Photo ${idx + 1}`}
+          </span>
+          <button type="button" onclick="removeUploadedPhoto(${idx})" style="position: absolute; top: 2px; right: 2px; background: rgba(220,38,38,0.85); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            ✕
+          </button>
+        </div>
+      `).join('');
     }
 
     async function handleProductUpload(e) {
       e.preventDefault();
 
-      if (!uploadedBase64) {
-        alert('Please select or capture a real photo of your cracker box first!');
+      if (uploadedPhotos.length === 0) {
+        alert('Please select or capture at least one real photo of your cracker box first!');
         return;
       }
 
@@ -1018,7 +1159,9 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
       const category = document.getElementById('prodCategory').value;
       const mrp = parseInt(document.getElementById('prodMrp').value, 10);
       const price = parseInt(document.getElementById('prodPrice').value, 10);
+      const badge = document.getElementById('prodBadge').value;
       const specs = document.getElementById('prodSpecs').value.trim();
+      const description = document.getElementById('prodDescription').value.trim();
 
       try {
         const res = await fetch('/api/admin/products', {
@@ -1027,15 +1170,24 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${authToken}`
           },
-          body: JSON.stringify({ name, category, mrp, price, specs, image: uploadedBase64 })
+          body: JSON.stringify({
+            name,
+            category,
+            mrp,
+            price,
+            badge,
+            specs,
+            description,
+            images: uploadedPhotos,
+            image: uploadedPhotos[0]
+          })
         });
         const data = await res.json();
 
         if (data.success) {
-          showToast(`Successfully published "${name}" to your live Amazon store!`);
-          uploadedBase64 = '';
-          document.getElementById('previewImg').style.display = 'none';
-          document.getElementById('chosenFileName').innerText = 'No file chosen';
+          showToast(`Successfully published "${name}" with ${uploadedPhotos.length} photo(s) to your live Amazon store!`);
+          uploadedPhotos = [];
+          renderPhotoPreviews();
           e.target.reset();
           switchTab('stock');
         } else {

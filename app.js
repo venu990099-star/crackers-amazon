@@ -156,23 +156,36 @@ function renderProducts() {
     const savingsPercent = Math.round(((prod.mrp - prod.price) / prod.mrp) * 100);
     const isOut = prod.inStock === false;
 
+    // Badges based on admin selection
+    let badgeHtml = '';
+    if (prod.badge === 'bestseller') {
+      badgeHtml = `<div class="amz-badge-bestseller"><i class="fa-solid fa-trophy"></i> #1 Best Seller</div>`;
+    } else if (prod.badge === 'choice') {
+      badgeHtml = `<div class="amz-badge-choice"><span class="highlight">Amazon's</span> Choice</div>`;
+    } else if (prod.badge === 'deal') {
+      badgeHtml = `<div class="amz-badge-deal">⚡ Limited Deal</div>`;
+    } else if (prod.badge === 'recommended') {
+      badgeHtml = `<div class="amz-badge-recommended">★ Highly Recommended</div>`;
+    }
+
+    const ratingVal = prod.rating || 4.9;
+    const reviewCnt = prod.reviewCount ? `(${prod.reviewCount})` : 'Verified Sivakasi';
+
     return `
       <div class="amz-product-card ${isOut ? 'out-of-stock' : ''}" id="card-${prod.id}">
-        <div class="amz-choice-badge">
-          <span class="highlight">Amazon's</span> Choice
-        </div>
-        <div class="amz-card-thumb">
+        ${badgeHtml}
+        <div class="amz-card-thumb" onclick="openProductModal('${prod.id}')" title="Click to view full photos & details">
           <img src="${prod.image}" alt="${prod.name}" loading="lazy">
         </div>
-        <h3 class="amz-card-title">${prod.name}</h3>
+        <h3 class="amz-card-title" onclick="openProductModal('${prod.id}')" title="Click to view full photos & details">${prod.name}</h3>
         <span class="amz-card-specs">${prod.specs || '100% Authentic Sivakasi Stock'}</span>
         
-        <div class="amz-card-ratings">
+        <div class="amz-card-ratings" onclick="openProductModal('${prod.id}')" style="cursor: pointer;">
           <span class="stars-gold">★★★★★</span>
-          <span class="review-count">Verified Stock</span>
+          <span class="review-count">${ratingVal} ${reviewCnt}</span>
         </div>
 
-        <div class="amz-card-price-box">
+        <div class="amz-card-price-box" onclick="openProductModal('${prod.id}')" style="cursor: pointer;">
           <div class="deal-line">
             <span class="deal-tag-red">${savingsPercent}% off</span>
             <span class="deal-label-red">Wholesale Rate</span>
@@ -184,6 +197,12 @@ function renderProducts() {
         <div class="delivery-promise">
           <i class="fa-solid fa-truck-fast text-orange"></i> <strong>Express Delivery</strong><br>
           <span style="font-size: 0.72rem; color: #565959;">From Kengeri Hub (To Challaghatta & routes)</span>
+        </div>
+
+        <div style="margin: 0.4rem 0 0.6rem; text-align: center;">
+          <a href="javascript:void(0)" onclick="openProductModal('${prod.id}')" style="font-size: 0.8rem; color: #007185; text-decoration: none; font-weight: 600;">
+            <i class="fa-solid fa-circle-info"></i> View Details & Photos
+          </a>
         </div>
 
         <div class="card-actions-row">
@@ -513,6 +532,9 @@ async function searchOrderStatus() {
 
     if (!data.success || !data.order) {
       resultBox.innerHTML = `
+        <div style="text-align: right; margin-bottom: 0.5rem;">
+          <button class="btn-close-tracking" onclick="closeTrackingBox()"><i class="fa-solid fa-xmark"></i> Close</button>
+        </div>
         <div style="text-align: center; color: #565959; padding: 1.5rem;">
           <h4>No package found for "${query}"</h4>
           <p style="font-size: 0.85rem; margin-top: 0.4rem;">Check your Order ID (e.g. BLR-1001) or registered phone number.</p>
@@ -525,15 +547,16 @@ async function searchOrderStatus() {
     const estDelivery = order.estimatedDelivery || 'Today / Tomorrow (Fast Kengeri Route)';
 
     resultBox.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #d5d9d9; padding-bottom: 0.8rem; margin-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d5d9d9; padding-bottom: 0.8rem; margin-bottom: 1rem;">
         <div>
-          <h3 style="font-size: 1.3rem; color: #0f1111;">Order #${order.id}</h3>
+          <h3 style="font-size: 1.3rem; color: #0f1111; margin: 0;">Order #${order.id}</h3>
           <span style="font-size: 0.8rem; color: #565959;">Placed on: ${order.timestamp}</span>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
           <span style="background: #e7f4e8; color: #067d62; padding: 0.3rem 0.8rem; border-radius: 4px; font-weight: 700; font-size: 0.85rem;">
             ${order.status.toUpperCase().replace(/_/g, ' ')}
           </span>
+          <button class="btn-close-tracking" onclick="closeTrackingBox()" title="Dismiss tracking box"><i class="fa-solid fa-xmark"></i> Close Tracker</button>
         </div>
       </div>
 
@@ -555,8 +578,23 @@ async function searchOrderStatus() {
       </div>
     `;
   } catch (err) {
-    resultBox.innerHTML = `<p style="color: #cc0c39;">Could not connect to tracking server. Please try again.</p>`;
+    resultBox.innerHTML = `
+      <div style="text-align: right; margin-bottom: 0.5rem;">
+        <button class="btn-close-tracking" onclick="closeTrackingBox()"><i class="fa-solid fa-xmark"></i> Close</button>
+      </div>
+      <p style="color: #cc0c39;">Could not connect to tracking server. Please try again.</p>
+    `;
   }
+}
+
+function closeTrackingBox() {
+  const resultBox = document.getElementById('trackingResultBox');
+  if (resultBox) {
+    resultBox.innerHTML = '';
+    resultBox.style.display = 'none';
+  }
+  const input = document.getElementById('trackSearchInput');
+  if (input) input.value = '';
 }
 
 // Category / Filter Controls
@@ -672,4 +710,343 @@ function checkBangaloreArea(query) {
       🚚 Dispatched from Kengeri Central Warehouse within 24 hours.
     `;
   }
+}
+
+// -------------------------------------------------------------
+// Amazon Interactive Product Detail Modal & Reviews Logic
+// -------------------------------------------------------------
+let currentModalProductId = null;
+let currentModalSelectedRating = 5;
+
+async function openProductModal(productId) {
+  currentModalProductId = productId;
+  const modalBackdrop = document.getElementById('productModalBackdrop');
+  const modalBody = document.getElementById('productModalBody');
+  if (!modalBackdrop || !modalBody) return;
+
+  modalBody.innerHTML = `
+    <div style="text-align: center; padding: 4rem 1rem;">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.5rem; color: #ff9900; margin-bottom: 1rem;"></i>
+      <h3 style="color: #0f1111;">Loading cracker photos & specifications...</h3>
+    </div>
+  `;
+  modalBackdrop.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  try {
+    const res = await fetch(`/api/products/${productId}`);
+    const data = await res.json();
+    if (!data.success || !data.product) {
+      modalBody.innerHTML = `
+        <div style="text-align: center; padding: 3rem;">
+          <h3>Product details not found</h3>
+          <button class="btn btn-outline" onclick="closeProductModal()">Close</button>
+        </div>
+      `;
+      return;
+    }
+
+    const prod = data.product;
+    const images = (prod.images && prod.images.length > 0) ? prod.images : [prod.image];
+    const isOut = prod.inStock === false;
+    const savingsPercent = Math.round(((prod.mrp - prod.price) / prod.mrp) * 100);
+    const savingsAmount = prod.mrp - prod.price;
+    const reviews = prod.reviews || [];
+    const ratingVal = prod.rating || 4.9;
+    const reviewCount = prod.reviewCount || reviews.length;
+
+    // Badges
+    let badgeHtml = '';
+    if (prod.badge === 'bestseller') {
+      badgeHtml = `<span class="amz-badge-bestseller"><i class="fa-solid fa-trophy"></i> #1 Best Seller in Diwali Crackers</span>`;
+    } else if (prod.badge === 'choice') {
+      badgeHtml = `<span class="amz-badge-choice"><span class="highlight">Amazon's</span> Choice</span>`;
+    } else if (prod.badge === 'deal') {
+      badgeHtml = `<span class="amz-badge-deal">⚡ Limited Time Festival Deal</span>`;
+    } else if (prod.badge === 'recommended') {
+      badgeHtml = `<span class="amz-badge-recommended">★ Highly Recommended</span>`;
+    }
+
+    const catLabels = {
+      aerial: 'Sky Shots & Aerial Celebrations',
+      sparklers: 'Sparklers & Lights',
+      flowerpots: 'Flower Pots / Anar',
+      chakkars: 'Ground Chakkars & Spinners',
+      kids: 'Kids Novelties',
+      combos: 'Diwali Family Combos'
+    };
+    const catName = catLabels[prod.category] || 'Direct Sivakasi Crackers';
+
+    const thumbsHtml = images.map((imgUrl, idx) => `
+      <div class="modal-thumb-item ${idx === 0 ? 'active' : ''}" onclick="switchModalImage('${imgUrl}', this)">
+        <img src="${imgUrl}" alt="${prod.name} photo ${idx + 1}">
+      </div>
+    `).join('');
+
+    let reviewsListHtml = '';
+    if (reviews.length === 0) {
+      reviewsListHtml = `
+        <div style="padding: 1rem 0; color: #565959; font-size: 0.9rem;">
+          <p>No customer reviews yet. Be the first customer in Bangalore to review this cracker box!</p>
+        </div>
+      `;
+    } else {
+      reviewsListHtml = reviews.map(rev => `
+        <div class="review-item-card">
+          <div class="review-user-row">
+            <i class="fa-solid fa-circle-user" style="color: #888; font-size: 1.2rem;"></i>
+            <span>${rev.customer_name}</span>
+            <span class="verified-tag"><i class="fa-solid fa-circle-check"></i> Verified Bangalore Purchase</span>
+          </div>
+          <div style="margin: 0.3rem 0; display: flex; align-items: center; gap: 0.5rem;">
+            <span class="stars-gold">${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}</span>
+            <strong style="font-size: 0.88rem; color: #0f1111;">${rev.title || 'Great Diwali Cracker!'}</strong>
+          </div>
+          <p style="font-size: 0.85rem; color: #333; line-height: 1.4; margin: 0.2rem 0;">${rev.comment}</p>
+          <span style="font-size: 0.75rem; color: #888;">Reviewed on ${rev.created_at || 'Verified Date'}</span>
+        </div>
+      `).join('');
+    }
+
+    modalBody.innerHTML = `
+      <div class="modal-breadcrumb">
+        <span>Amazon Crackers</span> &gt; <span>${catName}</span> &gt; <span>${prod.name}</span>
+      </div>
+
+      <div class="product-modal-grid">
+        <!-- Left: Image Gallery with Thumbnails -->
+        <div class="modal-gallery-wrap">
+          <div class="modal-main-img-box" id="modalMainImageBox">
+            <img id="modalMainImg" src="${images[0]}" alt="${prod.name}">
+          </div>
+          ${images.length > 1 ? `<div class="modal-thumb-strip">${thumbsHtml}</div>` : ''}
+          <div style="font-size: 0.78rem; color: #565959; text-align: center; margin-top: 0.4rem;">
+            <i class="fa-solid fa-shield-halved text-green"></i> 100% Genuine Box Direct from Sivakasi Factory • Dispatch via Kengeri Hub
+          </div>
+        </div>
+
+        <!-- Right: Details & Buy Box -->
+        <div class="modal-details-wrap">
+          ${badgeHtml ? `<div class="modal-badge-row">${badgeHtml}</div>` : ''}
+          <h2 class="modal-title">${prod.name}</h2>
+          
+          <div class="modal-ratings-row">
+            <span class="stars-gold">★★★★★</span>
+            <span style="font-size: 0.9rem; font-weight: 700; color: #007185;">${ratingVal} out of 5 stars</span>
+            <span style="color: #565959; font-size: 0.85rem;">(${reviewCount} verified customer ratings)</span>
+          </div>
+
+          <div class="modal-price-box">
+            <span class="modal-deal-badge">${savingsPercent}% OFF Wholesale Deal</span>
+            <div class="modal-price-main">
+              <span class="curr">₹</span>
+              <span class="val">${prod.price.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="modal-mrp-strike">
+              M.R.P.: <span style="text-decoration: line-through;">₹${prod.mrp.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="modal-savings-highlight">
+              You Save: ₹${savingsAmount.toLocaleString('en-IN')} (${savingsPercent}% Direct Factory Discount)
+            </div>
+            <div style="font-size: 0.76rem; color: #565959; margin-top: 0.3rem;">
+              Inclusive of all festival taxes • Doorstep delivery available
+            </div>
+          </div>
+
+          <!-- Specs Table -->
+          <table class="modal-specs-table">
+            <tbody>
+              <tr>
+                <td class="spec-label">Product Type</td>
+                <td class="spec-val"><strong>${catName}</strong></td>
+              </tr>
+              <tr>
+                <td class="spec-label">Box Packaging</td>
+                <td class="spec-val">${prod.specs || 'Standard Sivakasi Factory Pack'}</td>
+              </tr>
+              <tr>
+                <td class="spec-label">Dispatched From</td>
+                <td class="spec-val">Amazon Crackers Kengeri Central Warehouse, Bangalore</td>
+              </tr>
+              <tr>
+                <td class="spec-label">Authenticity</td>
+                <td class="spec-val"><i class="fa-solid fa-circle-check text-green"></i> 100% Original Sivakasi Quality Checked</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- About this item / Description -->
+          <div class="modal-about-item">
+            <h4>About this item</h4>
+            <p>${prod.description || `${prod.name} is manufactured directly in Sivakasi with stringent quality standards. Designed for high performance, vivid colors, and thrilling celebrations. Delivered fresh and safe to your doorstep across Bangalore.`}</p>
+          </div>
+
+          <!-- Buy Box Actions -->
+          <div class="modal-buy-box">
+            <div class="modal-stock-status" style="color: ${isOut ? '#cc0c39' : '#067d62'};">
+              ${isOut ? '● Currently Out of Stock' : '● In Stock. Ships same-day from Kengeri Hub.'}
+            </div>
+            <div class="modal-delivery-promise">
+              <i class="fa-solid fa-truck-fast text-orange"></i> <strong>Fast Doorstep Delivery</strong> across Kengeri, Challaghatta, Chickpet, Majestic, Banashankari, and Whitefield.
+            </div>
+
+            <div class="modal-actions-row">
+              <button class="btn-modal-cart" ${isOut ? 'disabled' : ''} onclick="updateItemQty('${prod.id}', 1)">
+                <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+              </button>
+              <button class="btn-modal-buy" ${isOut ? 'disabled' : ''} onclick="buyNowFromModal('${prod.id}')">
+                <i class="fa-solid fa-bolt"></i> Buy Now (Express Checkout)
+              </button>
+              <a href="https://wa.me/918431027743?text=Namaskara%20Amazon%20Crackers%2C%20I%20want%20to%20order%20${encodeURIComponent(prod.name)}%20(Price%3A%20₹${prod.price})" target="_blank" class="btn-modal-whatsapp">
+                <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Order Directly on WhatsApp (+91 84310 27743)
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Customer Reviews & Rating Section -->
+      <div class="modal-reviews-section">
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f1111; margin-bottom: 1rem;">
+          Customer Reviews & Verified Ratings
+        </h3>
+        
+        <div class="reviews-grid-wrap">
+          <!-- Left: Write a Review Form -->
+          <div class="write-review-card">
+            <h4 style="font-size: 1rem; color: #0f1111; margin-bottom: 0.4rem;">Rate this Product</h4>
+            <p style="font-size: 0.82rem; color: #565959; margin-bottom: 0.8rem;">Share your festival feedback with Bangalore buyers:</p>
+            
+            <form onsubmit="handleCustomerReviewSubmit(event, '${prod.id}')">
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #333; display: block;">Your Name *</label>
+                <input type="text" id="reviewAuthor" required placeholder="e.g. Ramesh Kumar, Kengeri" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem;">
+              </div>
+
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #333; display: block;">Overall Rating *</label>
+                <div class="star-rating-select" id="starRatingSelect">
+                  <span class="star selected" data-value="1" onclick="setStarRating(1)">★</span>
+                  <span class="star selected" data-value="2" onclick="setStarRating(2)">★</span>
+                  <span class="star selected" data-value="3" onclick="setStarRating(3)">★</span>
+                  <span class="star selected" data-value="4" onclick="setStarRating(4)">★</span>
+                  <span class="star selected" data-value="5" onclick="setStarRating(5)">★</span>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 0.8rem;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #333; display: block;">Headline (Optional)</label>
+                <input type="text" id="reviewTitle" placeholder="e.g. Super sound and vibrant colors!" style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem;">
+              </div>
+
+              <div style="margin-bottom: 1rem;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: #333; display: block;">Your Review *</label>
+                <textarea id="reviewComment" required rows="3" placeholder="Tell customers how this cracker performed..." style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem;"></textarea>
+              </div>
+
+              <button type="submit" class="amz-btn-yellow" style="width: 100%; padding: 0.6rem; font-weight: 700;">
+                Submit Customer Review
+              </button>
+            </form>
+          </div>
+
+          <!-- Right: Existing Reviews -->
+          <div>
+            <div style="display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 1rem;">
+              <span style="font-size: 2.2rem; font-weight: 700; color: #0f1111;">${ratingVal}</span>
+              <span class="stars-gold" style="font-size: 1.3rem;">★★★★★</span>
+              <span style="color: #565959; font-size: 0.9rem;">based on ${reviewCount} customer reviews</span>
+            </div>
+            
+            <div id="reviewsListContainer">
+              ${reviewsListHtml}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    currentModalSelectedRating = 5;
+  } catch (err) {
+    modalBody.innerHTML = `
+      <div style="text-align: center; padding: 3rem;">
+        <h3>Could not load product details. Please check your internet connection.</h3>
+        <button class="btn btn-outline" onclick="closeProductModal()">Close</button>
+      </div>
+    `;
+  }
+}
+
+function switchModalImage(imgUrl, thumbEl) {
+  const mainImg = document.getElementById('modalMainImg');
+  if (mainImg) mainImg.src = imgUrl;
+
+  document.querySelectorAll('.modal-thumb-item').forEach(el => el.classList.remove('active'));
+  if (thumbEl) thumbEl.classList.add('active');
+}
+
+function closeProductModal() {
+  const modalBackdrop = document.getElementById('productModalBackdrop');
+  if (modalBackdrop) modalBackdrop.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleProductModalBackdropClick(event) {
+  if (event.target.id === 'productModalBackdrop') {
+    closeProductModal();
+  }
+}
+
+function setStarRating(val) {
+  currentModalSelectedRating = val;
+  const stars = document.querySelectorAll('#starRatingSelect .star');
+  stars.forEach(star => {
+    const starVal = parseInt(star.getAttribute('data-value'), 10);
+    star.classList.toggle('selected', starVal <= val);
+  });
+}
+
+async function handleCustomerReviewSubmit(event, productId) {
+  event.preventDefault();
+  const customerName = document.getElementById('reviewAuthor')?.value.trim();
+  const title = document.getElementById('reviewTitle')?.value.trim();
+  const comment = document.getElementById('reviewComment')?.value.trim();
+
+  if (!customerName || !comment) {
+    alert('Please enter your name and review comment.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/products/${productId}/reviews`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customerName,
+        rating: currentModalSelectedRating,
+        title,
+        comment
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Thank you! Your customer review was published successfully.');
+      openProductModal(productId);
+      loadProductsFromBackend();
+    } else {
+      alert(data.error || 'Failed to submit review.');
+    }
+  } catch (err) {
+    alert('Network error submitting review.');
+  }
+}
+
+function buyNowFromModal(productId) {
+  updateItemQty(productId, 1);
+  closeProductModal();
+  openCart();
+  setTimeout(() => {
+    openCheckout();
+  }, 250);
 }
