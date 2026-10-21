@@ -14,6 +14,8 @@
     ],
     "badge": "bestseller",
     "description": "Direct Sivakasi wholesale 50-shot aerial cake. Sky elevation above 120ft with brilliant gold strobes, crackling chrysanthemums, and emerald green palm bursts. Safety fuse included. Dispatched directly from Kengeri Central Warehouse.",
+    "rating": 4.9,
+    "reviews": [],
     "inStock": true,
     "createdAt": "2026-10-21 15:51:37"
   },
@@ -31,6 +33,8 @@
     ],
     "badge": "amazon_choice",
     "description": "Long-lasting bright white and golden sparklers. Specially formulated for family celebrations and kids safety. Burns evenly with minimal smoke for up to 90 seconds per rod.",
+    "rating": 4.9,
+    "reviews": [],
     "inStock": true,
     "createdAt": "2026-10-21 15:51:37"
   },
@@ -48,6 +52,8 @@
     ],
     "badge": "deal",
     "description": "Extra-high fountain reaching up to 15 feet. Multi-stage transformation from silver sparks to golden shower and green crackling tips. Made with premium Sivakasi barium-free formula.",
+    "rating": 4.9,
+    "reviews": [],
     "inStock": true,
     "createdAt": "2026-10-21 15:51:37"
   },
@@ -64,6 +70,8 @@
     ],
     "badge": "recommended",
     "description": "High-speed spinning ground wheels with bright silver and red ring projections. Smooth rotation without jumping or sticking on Bangalore paved surfaces.",
+    "rating": 4.9,
+    "reviews": [],
     "inStock": true,
     "createdAt": "2026-10-21 15:51:37"
   },
@@ -82,6 +90,8 @@
     ],
     "badge": "bestseller",
     "description": "Complete all-in-one Diwali celebration hamper for the entire family. Contains Sky shots, Sparklers, Anars, Chakkars, Roll caps, and Novelty crackers. 100% genuine Sivakasi wholesale pack.",
+    "rating": 4.9,
+    "reviews": [],
     "inStock": true,
     "createdAt": "2026-10-21 15:51:37"
   }

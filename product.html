@@ -724,7 +724,7 @@
         <div class="p-ratings-bar">
           <span class="stars-gold" id="productStars">★★★★★</span>
           <span id="productRatingScore" style="font-weight: 700; color: #007185;">4.9 out of 5</span>
-          <a href="#customerReviewsSection" style="color: #007185; text-decoration: none;" id="productReviewCountLink">(18 verified ratings)</a>
+          <a href="#customerReviewsSection" style="color: #007185; text-decoration: none;" id="productReviewCountLink">Ratings & Reviews</a>
         </div>
 
         <div class="p-price-card">
@@ -832,36 +832,36 @@
             <span class="score-number" id="reviewAvgScore">4.9</span>
             <div>
               <div class="stars-large" id="reviewAvgStars">★★★★★</div>
-              <span style="font-size: 0.85rem; color: #565959;" id="reviewTotalCount">18 customer ratings</span>
+              <span style="font-size: 0.85rem; color: #565959;" id="reviewTotalCount">Customer Ratings</span>
             </div>
           </div>
 
           <!-- Rating breakdown bars -->
-          <div>
+          <div id="ratingBarsContainer">
             <div class="rating-bar-row">
               <span>5 star</span>
-              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 90%;"></div></div>
-              <span>90%</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" id="barFill5" style="width: 100%;"></div></div>
+              <span id="barPct5">100%</span>
             </div>
             <div class="rating-bar-row">
               <span>4 star</span>
-              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 8%;"></div></div>
-              <span>8%</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" id="barFill4" style="width: 0%;"></div></div>
+              <span id="barPct4">0%</span>
             </div>
             <div class="rating-bar-row">
               <span>3 star</span>
-              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 2%;"></div></div>
-              <span>2%</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" id="barFill3" style="width: 0%;"></div></div>
+              <span id="barPct3">0%</span>
             </div>
             <div class="rating-bar-row">
               <span>2 star</span>
-              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%;"></div></div>
-              <span>0%</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" id="barFill2" style="width: 0%;"></div></div>
+              <span id="barPct2">0%</span>
             </div>
             <div class="rating-bar-row">
               <span>1 star</span>
-              <div class="rating-bar-track"><div class="rating-bar-fill" style="width: 0%;"></div></div>
-              <span>0%</span>
+              <div class="rating-bar-track"><div class="rating-bar-fill" id="barFill1" style="width: 0%;"></div></div>
+              <span id="barPct1">0%</span>
             </div>
           </div>
 

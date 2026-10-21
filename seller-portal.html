@@ -395,6 +395,78 @@
       z-index: 1000;
     }
 
+    /* Reviews Manager Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-backdrop.active {
+      display: flex;
+    }
+    .modal-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+    }
+    .modal-header h3 {
+      font-size: 1.15rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+    .modal-close-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .review-item-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 0.8rem;
+    }
+
     @media (max-width: 900px) {
       .delivery-controller-bar { grid-template-columns: 1fr; }
       .order-grid-info { grid-template-columns: 1fr; }
@@ -570,9 +642,14 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Packaging / Quantity Description</label>
-              <input type="text" id="prodSpecs" placeholder="e.g. 1 Box (10 Pcs) • Multicolor High Altitude">
+              <label><i class="fa-solid fa-star text-orange"></i> Star Rating (Amazon Rating 1.0 - 5.0) *</label>
+              <input type="number" id="prodRating" step="0.1" min="1.0" max="5.0" value="4.9" required placeholder="e.g. 4.9">
             </div>
+          </div>
+
+          <div class="form-group">
+            <label>Packaging / Quantity Description</label>
+            <input type="text" id="prodSpecs" placeholder="e.g. 1 Box (10 Pcs) • Multicolor High Altitude">
           </div>
 
           <div class="form-group">
@@ -622,6 +699,72 @@
             <i class="fa-solid fa-floppy-disk"></i> Update & Save New Password
           </button>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews Manager Modal -->
+  <div class="modal-backdrop" id="reviewsModalBackdrop" onclick="if(event.target === this) closeReviewsModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalProdTitle"><i class="fa-solid fa-comments text-orange"></i> Customer Reviews Manager</h3>
+          <p id="modalProdSubtitle" style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.2rem;"></p>
+        </div>
+        <button class="modal-close-btn" onclick="closeReviewsModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- New Review Form -->
+        <div style="background: rgba(255, 153, 0, 0.08); border: 1px solid rgba(255, 153, 0, 0.3); border-radius: 8px; padding: 1.2rem; margin-bottom: 1.5rem;">
+          <h4 style="color: #ff9900; margin-bottom: 0.4rem; font-size: 0.95rem;">
+            <i class="fa-solid fa-pen-to-square"></i> Write Customer Review
+          </h4>
+          <p style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 1rem;">
+            Write reviews here with different customer names, custom star ratings, and comments. These reviews will appear live on your Amazon product page immediately.
+          </p>
+
+          <form onsubmit="handleAdminSubmitReview(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Reviewer Name *</label>
+                <input type="text" id="revCustomerName" required placeholder="e.g. Ramesh Kumar / Sunita Hegde">
+              </div>
+              <div class="form-group">
+                <label>Star Rating *</label>
+                <select id="revRating" required>
+                  <option value="5">⭐⭐⭐⭐⭐ 5 Stars (Excellent)</option>
+                  <option value="4">⭐⭐⭐⭐ 4 Stars (Very Good)</option>
+                  <option value="3">⭐⭐⭐ 3 Stars (Average)</option>
+                  <option value="2">⭐⭐ 2 Stars (Below Average)</option>
+                  <option value="1">⭐ 1 Star (Poor)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Review Headline / Title *</label>
+              <input type="text" id="revTitle" required placeholder="e.g. Genuine Sivakasi quality, amazing sky bursts!">
+            </div>
+
+            <div class="form-group">
+              <label>Review Detailed Feedback / Comment *</label>
+              <textarea id="revComment" rows="3" required placeholder="Write detailed customer feedback..." style="width: 100%; padding: 0.6rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 4px; color: #fff; font-size: 0.9rem; font-family: inherit;"></textarea>
+            </div>
+
+            <button type="submit" class="btn-amz-yellow" style="width: auto; padding: 0.6rem 1.4rem; font-size: 0.9rem;">
+              <i class="fa-solid fa-paper-plane"></i> Publish Customer Review
+            </button>
+          </form>
+        </div>
+
+        <!-- Current Reviews List -->
+        <div>
+          <h4 style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fa-solid fa-list-check"></i> Published Reviews on this Product</span>
+            <span id="modalReviewsCountBadge" style="font-size: 0.8rem; color: #94a3b8;">0 reviews</span>
+          </h4>
+          <div id="modalReviewsList"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -946,12 +1089,15 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
       }
     }, 15000);
 
-    // Stock Management
+    // Stock & Review Management
+    let currentStockProducts = [];
+
     async function loadAdminStock() {
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
         const prods = data.products || [];
+        currentStockProducts = prods;
 
         if (prods.length > 0) {
           localStorage.setItem('amz_crackers_seller_vault', JSON.stringify(prods));
@@ -981,6 +1127,8 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
           else if (p.badge === 'recommended') { badgeLabel = '🔥 Recommended'; badgeColor = '#a855f7'; }
 
           const photoCount = (p.images && p.images.length) ? p.images.length : 1;
+          const revCount = (p.reviews && Array.isArray(p.reviews)) ? p.reviews.length : (p.reviewCount || 0);
+          const currentRating = (p.rating !== undefined && p.rating !== null) ? Number(p.rating).toFixed(1) : '4.9';
 
           return `
             <div class="stock-card">
@@ -989,6 +1137,10 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
                 <h4>${p.name}</h4>
                 <div style="font-size: 0.82rem; color: var(--text-muted);">${p.specs || ''}</div>
                 <div style="font-size: 0.78rem; color: #94a3b8; margin: 0.2rem 0;">📷 ${photoCount} Photo(s) Attached</div>
+                <div style="font-size: 0.88rem; margin: 0.3rem 0; color: #ff9900; font-weight: 700;">
+                  ⭐ ${currentRating} / 5.0
+                  <span style="font-weight: 600; color: #38bdf8; font-size: 0.8rem; margin-left: 0.4rem;">(${revCount} review${revCount === 1 ? '' : 's'})</span>
+                </div>
                 <div style="font-size: 0.95rem; margin-top: 0.3rem;">
                   Price: <strong style="color: var(--amz-orange);">₹${p.price}</strong> 
                   <span style="font-size: 0.78rem; text-decoration: line-through; color: var(--text-muted);">MRP ₹${p.mrp}</span>
@@ -999,13 +1151,15 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
                 <div style="font-size: 0.78rem; margin: 0.2rem 0 0.5rem; color: ${p.inStock ? '#34d399' : '#fb7185'};">
                   ● ${p.inStock ? 'In Stock (Live on Store)' : 'Out of Stock'}
                 </div>
-                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                  <button class="btn-amz-yellow" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="editProductBadge('${p.id}', '${p.badge || ''}')">⭐ Badge</button>
-                  <button class="btn-amz-yellow" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="editProductPrice('${p.id}', ${p.price})">Edit ₹</button>
-                  <button class="btn-logout" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="toggleStockStatus('${p.id}', ${p.inStock})">
+                <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                  <button class="btn-amz-yellow" style="padding: 0.35rem 0.55rem; font-size: 0.75rem;" onclick="editProductRating('${p.id}', ${currentRating})">⭐ Rating</button>
+                  <button class="btn-amz-yellow" style="padding: 0.35rem 0.55rem; font-size: 0.75rem; background: #0284c7; border-color: #0369a1; color: #fff;" onclick="openReviewsManager('${p.id}')"><i class="fa-solid fa-comments"></i> Reviews (${revCount})</button>
+                  <button class="btn-amz-yellow" style="padding: 0.35rem 0.55rem; font-size: 0.75rem;" onclick="editProductBadge('${p.id}', '${p.badge || ''}')">🏷️ Badge</button>
+                  <button class="btn-amz-yellow" style="padding: 0.35rem 0.55rem; font-size: 0.75rem;" onclick="editProductPrice('${p.id}', ${p.price})">Edit ₹</button>
+                  <button class="btn-logout" style="padding: 0.35rem 0.55rem; font-size: 0.75rem;" onclick="toggleStockStatus('${p.id}', ${p.inStock})">
                     ${p.inStock ? 'Out' : 'In'}
                   </button>
-                  <button class="btn-logout" style="padding: 0.3rem 0.5rem; font-size: 0.75rem;" onclick="deleteProduct('${p.id}')">
+                  <button class="btn-logout" style="padding: 0.35rem 0.55rem; font-size: 0.75rem;" onclick="deleteProduct('${p.id}')">
                     <i class="fa-solid fa-trash"></i>
                   </button>
                 </div>
@@ -1086,6 +1240,188 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
         });
         showToast('Item deleted from store.');
         loadAdminStock();
+      }
+    }
+
+    async function editProductRating(id, currentRating) {
+      const newRatingStr = prompt(`Set Amazon Star Rating for this product (1.0 to 5.0):`, currentRating || '4.9');
+      if (newRatingStr === null) return;
+      const rating = parseFloat(newRatingStr);
+      if (isNaN(rating) || rating < 1.0 || rating > 5.0) {
+        alert('Please enter a valid rating between 1.0 and 5.0 (for example: 4.8 or 5.0)');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/admin/products/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ rating })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Star rating updated to ${rating.toFixed(1)} ⭐! Live on public store.`);
+          loadAdminStock();
+        } else {
+          alert(data.error || 'Failed to update rating.');
+        }
+      } catch (err) {
+        alert('Server connection error.');
+      }
+    }
+
+    // Customer Reviews Management
+    let activeReviewProductId = null;
+
+    async function openReviewsManager(productId) {
+      activeReviewProductId = productId;
+      const prod = currentStockProducts.find(p => p.id === productId);
+      const titleEl = document.getElementById('modalProdTitle');
+      const subtitleEl = document.getElementById('modalProdSubtitle');
+      if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-comments text-orange"></i> Reviews: ${prod ? prod.name : productId}`;
+      if (subtitleEl) subtitleEl.innerText = `Product ID: ${productId} • Set Rating: ${prod ? (prod.rating || 4.9) : 4.9} ★`;
+
+      // Reset form
+      document.getElementById('revCustomerName').value = '';
+      document.getElementById('revRating').value = '5';
+      document.getElementById('revTitle').value = '';
+      document.getElementById('revComment').value = '';
+
+      // Load reviews for this product
+      await refreshModalReviews(productId);
+
+      // Show modal
+      document.getElementById('reviewsModalBackdrop').classList.add('active');
+    }
+
+    function closeReviewsModal() {
+      activeReviewProductId = null;
+      document.getElementById('reviewsModalBackdrop').classList.remove('active');
+    }
+
+    async function refreshModalReviews(productId) {
+      const listEl = document.getElementById('modalReviewsList');
+      const badgeEl = document.getElementById('modalReviewsCountBadge');
+      if (!listEl) return;
+      listEl.innerHTML = '<div style="color: #94a3b8; font-size: 0.85rem; padding: 1rem 0;">Loading reviews...</div>';
+
+      try {
+        const res = await fetch(`/api/products/${productId}`);
+        const data = await res.json();
+        const prod = data.product;
+        const reviews = (prod && prod.reviews) ? prod.reviews : [];
+
+        if (badgeEl) badgeEl.innerText = `${reviews.length} review${reviews.length === 1 ? '' : 's'}`;
+
+        if (reviews.length === 0) {
+          listEl.innerHTML = `
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px dashed #334155; border-radius: 6px; padding: 1.5rem; text-align: center; color: #94a3b8; font-size: 0.88rem;">
+              <i class="fa-solid fa-comment-slash" style="font-size: 1.8rem; margin-bottom: 0.5rem; color: #64748b; display: block;"></i>
+              No customer reviews written for this product yet.<br>
+              Fill out the form above to write your first review with any customer name you choose!
+            </div>
+          `;
+          return;
+        }
+
+        listEl.innerHTML = reviews.map(r => {
+          const ratingNum = r.rating || 5;
+          const stars = '★'.repeat(ratingNum) + '☆'.repeat(5 - ratingNum);
+          const name = r.customer_name || r.customerName || 'Amazon Customer';
+          return `
+            <div class="review-item-card">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+                <div>
+                  <div style="font-weight: 700; color: #fff; font-size: 0.95rem;">
+                    <i class="fa-solid fa-circle-user" style="color: #94a3b8; margin-right: 0.3rem;"></i>
+                    ${name}
+                  </div>
+                  <div style="color: #ff9900; font-size: 0.9rem; margin-top: 0.2rem;">
+                    ${stars} <strong style="color: #fff; margin-left: 0.3rem; font-size: 0.88rem;">${r.title || ''}</strong>
+                  </div>
+                  <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.2rem;">
+                    Reviewed on ${r.date || 'Recent'} • <span style="color: #ff9900; font-weight: 700;">Verified Purchase</span>
+                  </div>
+                </div>
+                <button class="btn-logout" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="deleteAdminReview('${r.id}')" title="Delete this review">
+                  <i class="fa-solid fa-trash"></i> Delete
+                </button>
+              </div>
+              <div style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.5; margin-top: 0.4rem; background: rgba(0,0,0,0.25); padding: 0.6rem; border-radius: 4px;">
+                ${r.comment || ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (e) {
+        listEl.innerHTML = '<div style="color: #fb7185;">Failed to load reviews from server.</div>';
+      }
+    }
+
+    async function handleAdminSubmitReview(e) {
+      e.preventDefault();
+      if (!activeReviewProductId) return;
+
+      const customerName = document.getElementById('revCustomerName').value.trim();
+      const rating = parseInt(document.getElementById('revRating').value, 10);
+      const title = document.getElementById('revTitle').value.trim();
+      const comment = document.getElementById('revComment').value.trim();
+
+      if (!customerName || !title || !comment) {
+        alert('Please fill in reviewer name, title, and review comment.');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/products/${activeReviewProductId}/reviews`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName,
+            rating,
+            title,
+            comment,
+            verifiedPurchase: true
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Review by "${customerName}" posted successfully!`);
+          document.getElementById('revCustomerName').value = '';
+          document.getElementById('revTitle').value = '';
+          document.getElementById('revComment').value = '';
+          await refreshModalReviews(activeReviewProductId);
+          await loadAdminStock();
+        } else {
+          alert(data.error || 'Failed to submit review');
+        }
+      } catch (err) {
+        alert('Server error when submitting review.');
+      }
+    }
+
+    async function deleteAdminReview(reviewId) {
+      if (!confirm('Are you sure you want to permanently delete this customer review?')) return;
+
+      try {
+        const res = await fetch(`/api/admin/reviews/${reviewId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Review deleted permanently.');
+          if (activeReviewProductId) {
+            await refreshModalReviews(activeReviewProductId);
+          }
+          await loadAdminStock();
+        } else {
+          alert(data.error || 'Failed to delete review');
+        }
+      } catch (err) {
+        alert('Server error deleting review.');
       }
     }
 
@@ -1281,6 +1617,7 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
       const mrp = parseInt(document.getElementById('prodMrp').value, 10);
       const price = parseInt(document.getElementById('prodPrice').value, 10);
       const badge = document.getElementById('prodBadge').value;
+      const rating = parseFloat(document.getElementById('prodRating').value) || 4.9;
       const specs = document.getElementById('prodSpecs').value.trim();
       const description = document.getElementById('prodDescription').value.trim();
 
@@ -1297,6 +1634,7 @@ Direct Kengeri Warehouse Helpline: +91 84310 27743`;
             mrp,
             price,
             badge,
+            rating,
             specs,
             description,
             images: uploadedPhotos,

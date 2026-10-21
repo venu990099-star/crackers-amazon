@@ -115,7 +115,7 @@ function renderProductPage(prod) {
   if (titleEl) titleEl.innerText = prod.name;
 
   const avgRating = prod.rating || 4.9;
-  const revCount = prod.reviewCount !== undefined ? prod.reviewCount : (prod.reviews ? prod.reviews.length : 18);
+  const revCount = prod.reviewCount !== undefined ? prod.reviewCount : (prod.reviews ? prod.reviews.length : 0);
 
   const starsEl = document.getElementById('productStars');
   if (starsEl) starsEl.innerHTML = generateStarsHtml(avgRating);
@@ -124,7 +124,9 @@ function renderProductPage(prod) {
   if (ratingScoreEl) ratingScoreEl.innerText = `${avgRating} out of 5`;
 
   const reviewLinkEl = document.getElementById('productReviewCountLink');
-  if (reviewLinkEl) reviewLinkEl.innerText = `(${revCount} verified ratings)`;
+  if (reviewLinkEl) {
+    reviewLinkEl.innerText = revCount > 0 ? `(${revCount} customer rating${revCount === 1 ? '' : 's'})` : `(No reviews yet)`;
+  }
 
   // 5. Wholesale Pricing & Savings
   const mrp = prod.mrp || Math.round(prod.price * 2);
@@ -324,7 +326,7 @@ function goToRelatedProduct(id) {
 // -------------------------------------------------------------
 function renderReviewsSection(prod) {
   const reviews = Array.isArray(prod.reviews) ? prod.reviews : [];
-  const count = reviews.length || (prod.reviewCount || 18);
+  const count = reviews.length;
   const avg = prod.rating || 4.9;
 
   const scoreEl = document.getElementById('reviewAvgScore');
@@ -334,36 +336,28 @@ function renderReviewsSection(prod) {
   if (starsEl) starsEl.innerHTML = generateStarsHtml(avg);
 
   const totalEl = document.getElementById('reviewTotalCount');
-  if (totalEl) totalEl.innerText = `${count} verified customer ratings`;
+  if (totalEl) totalEl.innerText = count > 0 ? `${count} customer rating${count === 1 ? '' : 's'}` : 'Product Rating';
+
+  // Update dynamic rating breakdown bars
+  for (let s = 1; s <= 5; s++) {
+    const countForStar = reviews.filter(r => Math.round(r.rating || 5) === s).length;
+    const pct = count > 0 ? Math.round((countForStar / count) * 100) : (s === 5 ? 100 : 0);
+    const fillEl = document.getElementById(`barFill${s}`);
+    const pctEl = document.getElementById(`barPct${s}`);
+    if (fillEl) fillEl.style.width = `${pct}%`;
+    if (pctEl) pctEl.innerText = `${pct}%`;
+  }
 
   const container = document.getElementById('reviewsListContainer');
   if (!container) return;
 
   if (reviews.length === 0) {
-    // Render verified standard reviews
     container.innerHTML = `
-      <div class="customer-review-card">
-        <div class="rev-user-line">
-          <i class="fa-solid fa-circle-user" style="color: #a0aec0; font-size: 1.5rem;"></i>
-          <span>Venkatesh Rao, Kengeri Satellite Town</span>
-          <span class="rev-verified-tag"><i class="fa-solid fa-check"></i> Verified Purchase</span>
-        </div>
-        <div style="color: #de7921; font-size: 0.85rem; margin: 0.2rem 0;">★★★★★</div>
-        <div class="rev-headline">Direct Sivakasi wholesale quality, super sky elevation!</div>
-        <div class="rev-comment">Received the box in good condition. Dispatched directly from Kengeri warehouse in under 3 hours. Sound was deep and crackling colours lasted long in the sky. Excellent price compared to local retail shops.</div>
-        <div class="rev-date">Reviewed in Bengaluru on 18 October 2026</div>
-      </div>
-
-      <div class="customer-review-card">
-        <div class="rev-user-line">
-          <i class="fa-solid fa-circle-user" style="color: #a0aec0; font-size: 1.5rem;"></i>
-          <span>Priya Sharma, Banashankari 2nd Stage</span>
-          <span class="rev-verified-tag"><i class="fa-solid fa-check"></i> Verified Purchase</span>
-        </div>
-        <div style="color: #de7921; font-size: 0.85rem; margin: 0.2rem 0;">★★★★★</div>
-        <div class="rev-headline">Best festive deal and safe packaging for kids</div>
-        <div class="rev-comment">Very good quality Sivakasi crackers. Every shot burst with vibrant green and gold glitter. Will order our full family combo from Amazon Crackers this year too.</div>
-        <div class="rev-date">Reviewed in Bengaluru on 15 October 2026</div>
+      <div style="padding: 2.5rem 1.5rem; text-align: center; background: #fafafa; border: 1px dashed #d5d9d9; border-radius: 8px; color: #565959;">
+        <i class="fa-regular fa-comment-dots" style="font-size: 2.4rem; color: #a0aec0; margin-bottom: 0.8rem; display: block;"></i>
+        <h4 style="color: #0f1111; margin: 0 0 0.4rem; font-size: 1.05rem;">No customer reviews yet</h4>
+        <p style="font-size: 0.88rem; margin: 0 0 1rem; color: #565959;">Be the first customer to share your experience with this cracker!</p>
+        <a href="#starPicker" style="color: #007185; font-size: 0.88rem; font-weight: 700; text-decoration: none;">Write a review below ↓</a>
       </div>
     `;
   } else {
@@ -372,7 +366,7 @@ function renderReviewsSection(prod) {
       const headline = r.title || 'Verified Quality Cracker';
       const comment = r.comment || 'Great experience with fast Bangalore delivery.';
       const reviewer = r.customer_name || 'Amazon Customer';
-      const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Recently reviewed';
+      const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Verified Review';
 
       return `
         <div class="customer-review-card">
@@ -384,7 +378,7 @@ function renderReviewsSection(prod) {
           <div style="color: #de7921; font-size: 0.85rem; margin: 0.2rem 0;">${rStars}</div>
           <div class="rev-headline">${headline}</div>
           <div class="rev-comment">${comment}</div>
-          <div class="rev-date">Reviewed in Bengaluru on ${dateStr}</div>
+          <div class="rev-date">Reviewed on ${dateStr}</div>
         </div>
       `;
     }).join('');

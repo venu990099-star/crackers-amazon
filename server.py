@@ -37,7 +37,7 @@ def get_db():
     return conn
 
 def sync_products_to_json():
-    """Exports all products from SQLite to products.json so they persist across restarts."""
+    """Exports all products and their reviews from SQLite to products.json so they persist across restarts."""
     try:
         conn = get_db()
         cursor = conn.cursor()
@@ -45,6 +45,7 @@ def sync_products_to_json():
         rows = cursor.fetchall()
         prods = []
         for r in rows:
+            p_id = r['id']
             images = []
             try:
                 if 'images_json' in r.keys() and r['images_json']:
@@ -53,7 +54,23 @@ def sync_products_to_json():
                 images = []
             if not images and r['image']:
                 images = [r['image']]
-            
+
+            # Fetch product reviews
+            cursor.execute('SELECT id, customer_name, rating, title, comment, created_at FROM reviews WHERE product_id = ? ORDER BY created_at DESC', (p_id,))
+            rev_rows = cursor.fetchall()
+            p_reviews = []
+            for rev in rev_rows:
+                p_reviews.append({
+                    'id': rev['id'],
+                    'customer_name': rev['customer_name'],
+                    'rating': rev['rating'],
+                    'title': rev['title'] or '',
+                    'comment': rev['comment'] or '',
+                    'created_at': rev['created_at']
+                })
+
+            admin_rating = r['rating'] if ('rating' in r.keys() and r['rating'] is not None) else 4.9
+
             prods.append({
                 'id': r['id'],
                 'name': r['name'],
@@ -65,13 +82,15 @@ def sync_products_to_json():
                 'images': images,
                 'badge': r['badge'] if 'badge' in r.keys() and r['badge'] else '',
                 'description': r['description'] if 'description' in r.keys() and r['description'] else '',
+                'rating': round(float(admin_rating), 1),
+                'reviews': p_reviews,
                 'inStock': bool(r['in_stock']),
                 'createdAt': r['created_at']
             })
         conn.close()
         with open(PRODUCTS_JSON_PATH, 'w', encoding='utf-8') as f:
             json.dump(prods, f, indent=2)
-        print(f"[*] Synced {len(prods)} products to {PRODUCTS_JSON_PATH}")
+        print(f"[*] Synced {len(prods)} products and their reviews to {PRODUCTS_JSON_PATH}")
     except Exception as e:
         print(f"[!] Error syncing products to JSON: {e}")
 
@@ -142,6 +161,10 @@ def init_db():
         cursor.execute("ALTER TABLE products ADD COLUMN description TEXT DEFAULT ''")
     except sqlite3.OperationalError:
         pass
+    try:
+        cursor.execute("ALTER TABLE products ADD COLUMN rating REAL DEFAULT 4.9")
+    except sqlite3.OperationalError:
+        pass
     
     # Orders table
     cursor.execute('''
@@ -197,6 +220,9 @@ def init_db():
                        ('admin', salt, pwd_hash))
         print(f"[*] Initialized Admin User: admin (Default password: {default_pwd})")
 
+    # Remove any old default reviews so only admin-written reviews exist
+    cursor.execute("DELETE FROM reviews WHERE id IN ('rev-1', 'rev-2', 'rev-3', 'rev-4', 'rev-1dadbf9da39b')")
+
     # Load persistent products from products.json or default seed
     cursor.execute('SELECT COUNT(*) FROM products')
     p_count = cursor.fetchone()[0]
@@ -210,16 +236,30 @@ def init_db():
                     for p in saved_prods:
                         imgs = p.get('images', [p.get('image', '')])
                         imgs_json = json.dumps(imgs)
+                        p_rating = float(p.get('rating', 4.9))
                         cursor.execute('''
-                            INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, in_stock)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, rating, in_stock)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ''', (
                             p['id'], p['name'], p['category'], int(p.get('mrp', p['price'] * 2)), int(p['price']),
                             p.get('specs', ''), p.get('image', ''), imgs_json,
                             p.get('badge', ''), p.get('description', ''),
+                            p_rating,
                             1 if p.get('inStock', True) else 0
                         ))
-                    print(f"[*] Loaded {len(saved_prods)} products from products.json into database.")
+
+                        # Load custom reviews saved for this product
+                        for rev in p.get('reviews', []):
+                            cursor.execute('''
+                                INSERT OR IGNORE INTO reviews (id, product_id, customer_name, rating, title, comment, created_at)
+                                VALUES (?, ?, ?, ?, ?, ?, ?)
+                            ''', (
+                                rev['id'], p['id'], rev.get('customer_name', 'Customer'),
+                                int(rev.get('rating', 5)), rev.get('title', ''),
+                                rev.get('comment', ''), rev.get('created_at', None)
+                            ))
+
+                    print(f"[*] Loaded {len(saved_prods)} products and their custom reviews from products.json.")
                     loaded_from_json = True
             except Exception as e:
                 print(f"[!] Could not load products.json: {e}")
@@ -237,6 +277,7 @@ def init_db():
                     json.dumps(['images/aerial-shots.jpg', 'images/gift-box.jpg', 'images/hero-banner.jpg']),
                     'bestseller',
                     'Direct Sivakasi wholesale 50-shot aerial cake. Sky elevation above 120ft with brilliant gold strobes, crackling chrysanthemums, and emerald green palm bursts. Safety fuse included. Dispatched directly from Kengeri Central Warehouse.',
+                    4.9,
                     1
                 ),
                 (
@@ -250,6 +291,7 @@ def init_db():
                     json.dumps(['images/gift-box.jpg', 'images/hero-banner.jpg']),
                     'amazon_choice',
                     'Long-lasting bright white and golden sparklers. Specially formulated for family celebrations and kids safety. Burns evenly with minimal smoke for up to 90 seconds per rod.',
+                    4.9,
                     1
                 ),
                 (
@@ -263,6 +305,7 @@ def init_db():
                     json.dumps(['images/gift-box.jpg', 'images/aerial-shots.jpg']),
                     'deal',
                     'Extra-high fountain reaching up to 15 feet. Multi-stage transformation from silver sparks to golden shower and green crackling tips. Made with premium Sivakasi barium-free formula.',
+                    4.8,
                     1
                 ),
                 (
@@ -276,6 +319,7 @@ def init_db():
                     json.dumps(['images/gift-box.jpg']),
                     'recommended',
                     'High-speed spinning ground wheels with bright silver and red ring projections. Smooth rotation without jumping or sticking on Bangalore paved surfaces.',
+                    4.8,
                     1
                 ),
                 (
@@ -289,25 +333,15 @@ def init_db():
                     json.dumps(['images/gift-box.jpg', 'images/amazon-diwali-banner.jpg', 'images/aerial-shots.jpg']),
                     'bestseller',
                     'Complete all-in-one Diwali celebration hamper for the entire family. Contains Sky shots, Sparklers, Anars, Chakkars, Roll caps, and Novelty crackers. 100% genuine Sivakasi wholesale pack.',
+                    5.0,
                     1
                 )
             ]
             cursor.executemany('''
-                INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, in_stock)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, rating, in_stock)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', default_prods)
-
-        default_reviews = [
-            ('rev-1', 'prod-sky-50', 'Venkatesh Rao, Kengeri Satellite Town', 5, 'Super sky elevation and colours!', 'Received the box in good condition. Dispatched directly from Kengeri warehouse in under 3 hours. Sound was deep and crackling colours lasted long in the sky.'),
-            ('rev-2', 'prod-sky-50', 'Priya Sharma, Banashankari 2nd Stage', 5, 'Best festival experience!', 'Every single shot burst with amazing green and golden stars. Kids and neighbors were thrilled.'),
-            ('rev-3', 'prod-spark-mega', 'Anand Kumar, Challaghatta', 5, 'Safe and long-lasting sparklers', 'Burns for more than a minute with zero bad smell. Kids loved it!'),
-            ('rev-4', 'prod-combo-bumper', 'Deepak M., Whitefield ITPL', 5, 'Value for money Diwali combo', 'Direct Sivakasi wholesale price. Easily worth 4500 in retail shops.')
-        ]
-        cursor.executemany('''
-            INSERT INTO reviews (id, product_id, customer_name, rating, title, comment)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', default_reviews)
-        print("[*] Seeded default Sivakasi Diwali products & reviews.")
+            print("[*] Seeded default Sivakasi Diwali products with zero fake reviews.")
 
     conn.commit()
     conn.close()
@@ -375,7 +409,8 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
                 p_id = r['id']
                 cursor.execute('SELECT AVG(rating) as avg_rating, COUNT(*) as cnt FROM reviews WHERE product_id = ?', (p_id,))
                 rev_summary = cursor.fetchone()
-                avg_rating = round(rev_summary['avg_rating'], 1) if rev_summary and rev_summary['avg_rating'] else 4.9
+                admin_rating = r['rating'] if ('rating' in r.keys() and r['rating'] is not None) else 4.9
+                avg_rating = round(rev_summary['avg_rating'], 1) if rev_summary and rev_summary['avg_rating'] else round(float(admin_rating), 1)
                 rev_cnt = rev_summary['cnt'] if rev_summary and rev_summary['cnt'] else 0
 
                 images = []
@@ -423,8 +458,11 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
                 reviews_list = [dict(rev) for rev in rev_rows]
                 cursor.execute('SELECT AVG(rating) as avg_rating, COUNT(*) as cnt FROM reviews WHERE product_id = ?', (p_id,))
                 rev_summary = cursor.fetchone()
+                cursor.execute('SELECT rating FROM products WHERE id = ?', (p_id,))
+                prod_row = cursor.fetchone()
+                admin_rating = prod_row['rating'] if prod_row and 'rating' in prod_row.keys() and prod_row['rating'] is not None else 4.9
                 conn.close()
-                avg_rating = round(rev_summary['avg_rating'], 1) if rev_summary and rev_summary['avg_rating'] else 4.9
+                avg_rating = round(float(admin_rating), 1)
                 rev_cnt = rev_summary['cnt'] if rev_summary and rev_summary['cnt'] else 0
                 self.send_json({
                     'success': True,
@@ -450,7 +488,8 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
                 rev_summary = cursor.fetchone()
                 conn.close()
 
-                avg_rating = round(rev_summary['avg_rating'], 1) if rev_summary and rev_summary['avg_rating'] else 4.9
+                admin_rating = r['rating'] if ('rating' in r.keys() and r['rating'] is not None) else 4.9
+                avg_rating = round(float(admin_rating), 1)
                 rev_cnt = rev_summary['cnt'] if rev_summary and rev_summary['cnt'] else 0
 
                 images = []
@@ -719,7 +758,7 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
         # 2c. API: Customer Submit Review (Public)
         elif path.startswith('/api/products/') and path.endswith('/reviews'):
             p_id = path[len('/api/products/'):-len('/reviews')].strip()
-            customer_name = body.get('customerName', '').strip() or 'Bangalore Customer'
+            customer_name = body.get('customerName', '').strip() or body.get('customer_name', '').strip() or 'Bangalore Customer'
             rating = int(body.get('rating', 5))
             rating = max(1, min(5, rating))
             title = body.get('title', '').strip()
@@ -738,6 +777,7 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             ''', (rev_id, p_id, customer_name, rating, title, comment))
             conn.commit()
             conn.close()
+            sync_products_to_json()
 
             print(f"[+] Review submitted for product {p_id} by {customer_name} ({rating} stars)")
             self.send_json({'success': True, 'reviewId': rev_id})
@@ -756,6 +796,7 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             specs = body.get('specs', '').strip()
             badge = body.get('badge', '').strip()
             description = body.get('description', '').strip()
+            rating = float(body.get('rating', 4.9))
             
             raw_images = body.get('images', [])
             single_image = body.get('image', '').strip()
@@ -783,13 +824,13 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             conn = get_db()
             cursor = conn.cursor()
             cursor.execute('''
-                INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, in_stock)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-            ''', (prod_id, name, category, mrp, price, specs, main_image, images_json, badge, description))
+                INSERT INTO products (id, name, category, mrp, price, specs, image, images_json, badge, description, rating, in_stock)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+            ''', (prod_id, name, category, mrp, price, specs, main_image, images_json, badge, description, rating))
             conn.commit()
             conn.close()
 
-            print(f"[+] Product added: {name} (₹{price}) with {len(saved_image_urls)} images, badge: '{badge}'")
+            print(f"[+] Product added: {name} (₹{price}) with {len(saved_image_urls)} images, rating: {rating}, badge: '{badge}'")
             sync_products_to_json()
             self.send_json({'success': True, 'id': prod_id})
             return
@@ -920,6 +961,9 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             if specs is not None:
                 updates.append("specs = ?")
                 params.append(specs.strip())
+            if body.get('rating') is not None:
+                updates.append("rating = ?")
+                params.append(round(float(body.get('rating')), 1))
 
             if updates:
                 params.append(prod_id)
@@ -937,7 +981,7 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             self.send_error_json('Endpoint not found', status=404)
 
     # -------------------------------------------------------------
-    # DELETE REQUEST HANDLER (Delete Product)
+    # DELETE REQUEST HANDLER (Delete Product or Review)
     # -------------------------------------------------------------
     def do_DELETE(self):
         parsed = urlparse(self.path)
@@ -952,10 +996,23 @@ class CrackersRequestHandler(BaseHTTPRequestHandler):
             conn = get_db()
             cursor = conn.cursor()
             cursor.execute('DELETE FROM products WHERE id = ?', (prod_id,))
+            cursor.execute('DELETE FROM reviews WHERE product_id = ?', (prod_id,))
             conn.commit()
             conn.close()
             sync_products_to_json()
             print(f"[*] Product {prod_id} deleted by seller and removed from products.json")
+            self.send_json({'success': True})
+            return
+
+        elif path.startswith('/api/admin/reviews/'):
+            rev_id = path.split('/api/admin/reviews/')[1].strip()
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM reviews WHERE id = ?', (rev_id,))
+            conn.commit()
+            conn.close()
+            sync_products_to_json()
+            print(f"[*] Review {rev_id} deleted by seller")
             self.send_json({'success': True})
             return
 
