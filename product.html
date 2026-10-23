@@ -592,16 +592,261 @@
       }
     }
 
+    /* Mobile Responsive Optimizations */
+    .nav-mobile-wa-btn { display: none; }
+    .mobile-location-strip { display: none; }
+    .mobile-sticky-buy-bar { display: none; }
+
     @media (max-width: 768px) {
+      /* Mobile Header */
+      .header-main-row {
+        flex-wrap: wrap !important;
+        height: auto !important;
+        padding: 0.45rem 0.6rem !important;
+        gap: 0.4rem !important;
+        justify-content: space-between !important;
+      }
+      .amazon-logo-box .amz-brand {
+        font-size: 1.25rem !important;
+      }
+      .amazon-logo-box .amz-tagline {
+        display: none !important;
+      }
+      .nav-location-box, .nav-lang-box, .nav-whatsapp-help-desktop {
+        display: none !important;
+      }
+      .nav-mobile-wa-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        background: #25d366;
+        color: #fff !important;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        text-decoration: none !important;
+        box-shadow: 0 2px 6px rgba(37, 211, 102, 0.4);
+      }
+      .nav-orders-box {
+        padding: 0.25rem 0.45rem !important;
+      }
+      .nav-orders-box .nav-line1 {
+        display: none !important;
+      }
+      .nav-orders-box .nav-line2 {
+        font-size: 0.78rem !important;
+      }
+      .amazon-cart-btn {
+        padding: 0.25rem 0.45rem !important;
+      }
+      .amazon-cart-btn .cart-label {
+        display: none !important;
+      }
+      .amazon-search-bar {
+        order: 3 !important;
+        width: 100% !important;
+        margin-top: 0.2rem !important;
+        height: 40px !important;
+      }
+      .search-category-select {
+        display: none !important;
+      }
+      .amazon-search-bar input {
+        font-size: 0.88rem !important;
+        padding: 0 0.75rem !important;
+      }
+
+      /* Mobile Delivery Location Strip */
+      .mobile-location-strip {
+        display: flex !important;
+        align-items: center;
+        gap: 0.5rem;
+        background: #232f3e;
+        color: #fff;
+        padding: 0.45rem 0.8rem;
+        font-size: 0.78rem;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .mobile-location-strip i {
+        color: #ffa41c;
+        font-size: 0.85rem;
+      }
+
+      /* Subnav Mobile */
+      .amazon-subnav {
+        padding: 0 0.5rem !important;
+        height: 38px !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        white-space: nowrap;
+      }
+      .amazon-subnav::-webkit-scrollbar { display: none; }
+      .subnav-left {
+        display: flex !important;
+        gap: 0.4rem !important;
+        flex-shrink: 0;
+      }
+      .subnav-link {
+        font-size: 0.78rem !important;
+        padding: 0.25rem 0.6rem !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px !important;
+        white-space: nowrap !important;
+      }
+      .subnav-right { display: none !important; }
+
+      /* Product Detail Layout on Mobile */
       .product-detail-layout {
-        grid-template-columns: 1fr;
-        padding: 1rem;
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 0.8rem 0.6rem !important;
+        gap: 1rem !important;
+      }
+
+      .p-gallery-col {
+        order: 1 !important;
       }
       .p-main-img-wrap {
-        height: 300px;
+        height: 270px !important;
       }
+      .p-thumb-item {
+        width: 55px !important;
+        height: 55px !important;
+      }
+
+      .p-info-col {
+        order: 2 !important;
+      }
+      .p-title {
+        font-size: 1.25rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.4rem !important;
+      }
+      .p-ratings-bar {
+        font-size: 0.82rem !important;
+        padding-bottom: 0.5rem !important;
+        margin-bottom: 0.8rem !important;
+      }
+      .p-price-card {
+        padding: 0.8rem !important;
+        margin-bottom: 0.8rem !important;
+      }
+      .p-price-row .amount {
+        font-size: 1.8rem !important;
+      }
+
+      /* Buy Box on Mobile placed right under Price */
+      .p-buybox-col {
+        order: 3 !important;
+        padding: 1rem 0.8rem !important;
+        margin-bottom: 1rem !important;
+      }
+      .btn-buybox-cart, .btn-buybox-buy, .btn-buybox-wa {
+        height: 44px !important;
+        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+      }
+
+      .p-specs-table {
+        font-size: 0.82rem !important;
+      }
+      .p-specs-table td {
+        padding: 0.5rem 0.4rem !important;
+      }
+      .p-about-section h3 {
+        font-size: 1rem !important;
+      }
+      .p-about-section p {
+        font-size: 0.85rem !important;
+      }
+
+      /* Related Products 2-column mobile grid */
       .related-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+
+      /* Reviews section on mobile */
+      .reviews-section-wrapper {
+        padding: 1.2rem 0.8rem 5rem !important; /* Extra bottom padding for sticky bar */
+      }
+      .score-number {
+        font-size: 2.2rem !important;
+      }
+      .stars-large {
+        font-size: 1.1rem !important;
+      }
+      .rating-bar-row {
+        font-size: 0.78rem !important;
+      }
+      .write-review-form-card {
+        padding: 1rem 0.8rem !important;
+      }
+
+      /* Mobile Sticky Bottom CTA Bar */
+      .mobile-sticky-buy-bar {
+        display: flex !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        background: #ffffff;
+        border-top: 1px solid #d5d9d9;
+        box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.12);
+        padding: 0.5rem 0.8rem;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+      }
+
+      .sticky-price-wrap {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+      }
+      .sticky-price-val {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #b12704;
+      }
+      .sticky-stock-val {
+        font-size: 0.72rem;
+        color: #067d62;
+        font-weight: 700;
+      }
+
+      .sticky-btns-wrap {
+        display: flex;
+        gap: 0.4rem;
+        flex: 1;
+        justify-content: flex-end;
+      }
+
+      .sticky-btn-cart {
+        background: #ffd814;
+        border: 1px solid #fcd200;
+        color: #0f1111;
+        font-weight: 700;
+        font-size: 0.82rem;
+        padding: 0.55rem 0.8rem;
+        border-radius: 20px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .sticky-btn-buy {
+        background: #ffa41c;
+        border: 1px solid #ff8f00;
+        color: #0f1111;
+        font-weight: 700;
+        font-size: 0.82rem;
+        padding: 0.55rem 0.9rem;
+        border-radius: 20px;
+        cursor: pointer;
+        white-space: nowrap;
       }
     }
   </style>
@@ -649,10 +894,15 @@
         <span class="nav-lang-text">EN ▼</span>
       </div>
 
-      <!-- WhatsApp Help -->
-      <a href="https://wa.me/918431027743?text=Namaskara%20Amazon%20Crackers%2C%20I%20need%20help%20with%20an%20order" target="_blank" class="nav-orders-box" style="text-decoration: none; color: #fff;">
+      <!-- WhatsApp Help (Desktop) -->
+      <a href="https://wa.me/918431027743?text=Namaskara%20Amazon%20Crackers%2C%20I%20need%20help%20with%20an%20order" target="_blank" class="nav-orders-box nav-whatsapp-help-desktop" style="text-decoration: none; color: #fff;">
         <span class="nav-line1">WhatsApp Help</span>
         <span class="nav-line2" style="color: #25d366;"><i class="fa-brands fa-whatsapp"></i> +91 84310 27743</span>
+      </a>
+
+      <!-- Mobile WhatsApp Quick Icon Button -->
+      <a href="https://wa.me/918431027743?text=Namaskara%20Amazon%20Crackers%2C%20I%20want%20to%20order%20crackers" target="_blank" class="nav-mobile-wa-btn" title="Chat on WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
       </a>
 
       <!-- Orders & Tracking -->
@@ -670,6 +920,12 @@
         <span class="cart-label">Cart</span>
       </div>
     </div>
+
+    <!-- Mobile Deliver-To Strip (Signature Amazon App Location Bar) -->
+    <a href="index.html#locationSection" class="mobile-location-strip" style="text-decoration: none;">
+      <i class="fa-solid fa-location-dot"></i>
+      <span>Deliver to Bangalore 560060 - <strong>Kengeri Hub & Routes ▼</strong></span>
+    </a>
 
     <!-- Secondary Amazon Subnav -->
     <div class="amazon-subnav">
@@ -1111,6 +1367,22 @@
     <i class="fa-brands fa-whatsapp"></i>
     <span>Order on WhatsApp</span>
   </a>
+
+  <!-- Mobile Sticky Bottom Buy Bar (Amazon App Style) -->
+  <div class="mobile-sticky-buy-bar" id="mobileStickyBuyBar">
+    <div class="sticky-price-wrap">
+      <span class="sticky-price-val" id="stickyPriceVal">₹0</span>
+      <span class="sticky-stock-val">● In Stock</span>
+    </div>
+    <div class="sticky-btns-wrap">
+      <button class="sticky-btn-cart" onclick="addProductToCartFromPage()">
+        <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+      </button>
+      <button class="sticky-btn-buy" onclick="buyNowFromPage()">
+        <i class="fa-solid fa-bolt"></i> Buy Now
+      </button>
+    </div>
+  </div>
 
   <script src="product.js"></script>
 </body>

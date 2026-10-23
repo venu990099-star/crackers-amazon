@@ -2004,47 +2004,420 @@ a:hover {
   }
 }
 
+/* -------------------------------------------------------------
+   MOBILE APP STYLES (Clean Amazon India Mobile Layout)
+   ------------------------------------------------------------- */
+.nav-mobile-wa-btn {
+  display: none;
+}
+
+.mobile-location-strip {
+  display: none;
+}
+
 @media (max-width: 768px) {
+  /* Header Mobile Layout: 2 Clean Rows */
   .header-main-row {
-    flex-wrap: wrap;
-    height: auto;
-    padding: 0.5rem;
+    flex-wrap: wrap !important;
+    height: auto !important;
+    padding: 0.45rem 0.6rem !important;
+    gap: 0.4rem !important;
+    justify-content: space-between !important;
   }
+
+  .amazon-logo-wrap {
+    padding: 0.2rem 0 !important;
+  }
+
+  .amazon-logo-wrap .amz-text {
+    font-size: 1.25rem !important;
+  }
+
+  .amazon-logo-wrap .amz-smile-curve {
+    width: 72px !important;
+    height: 11px !important;
+  }
+
+  .amazon-logo-wrap .amazon-cracker-spark {
+    font-size: 0.72rem !important;
+    top: -8px !important;
+    right: -6px !important;
+  }
+
+  /* Hide bulky desktop elements on mobile */
+  .nav-location-box,
+  .lang-selector,
+  .nav-whatsapp-help-desktop {
+    display: none !important;
+  }
+
+  /* Show dedicated mobile WhatsApp icon button */
+  .nav-mobile-wa-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: #25d366;
+    color: #fff !important;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    text-decoration: none !important;
+    box-shadow: 0 2px 6px rgba(37, 211, 102, 0.4);
+    transition: transform 0.15s;
+  }
+
+  .nav-mobile-wa-btn:active {
+    transform: scale(0.92);
+  }
+
+  .track-orders-link {
+    padding: 0.25rem 0.45rem !important;
+  }
+
+  .track-orders-link .nav-line1 {
+    display: none !important;
+  }
+
+  .track-orders-link .nav-line2 {
+    font-size: 0.78rem !important;
+  }
+
+  .amazon-cart-btn {
+    padding: 0.25rem 0.45rem !important;
+  }
+
+  .amazon-cart-btn .cart-label {
+    display: none !important;
+  }
+
+  .cart-icon-wrap i {
+    font-size: 1.35rem !important;
+  }
+
+  .cart-item-count {
+    top: -4px !important;
+    right: -6px !important;
+    font-size: 0.75rem !important;
+    width: 17px !important;
+    height: 17px !important;
+    line-height: 17px !important;
+  }
+
+  /* Row 2: Search Bar Full Width */
   .amazon-search-bar {
-    order: 3;
-    width: 100%;
-    margin-top: 0.4rem;
+    order: 3 !important;
+    width: 100% !important;
+    margin-top: 0.2rem !important;
+    height: 40px !important;
   }
-  .nav-location-box {
+
+  .search-category-dropdown {
+    display: none !important;
+  }
+
+  .amazon-search-bar input {
+    font-size: 0.88rem !important;
+    padding: 0 0.75rem !important;
+  }
+
+  .search-submit-btn {
+    width: 44px !important;
+    font-size: 0.95rem !important;
+  }
+
+  /* Dedicated Mobile Deliver-To Strip (Amazon App Style) */
+  .mobile-location-strip {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    background: #232f3e;
+    color: #fff;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.78rem;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .mobile-location-strip i {
+    color: #ffa41c;
+    font-size: 0.85rem;
+  }
+
+  .mobile-location-strip span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Subnav Mobile: Horizontal Scrollable Ribbon */
+  .amazon-subnav {
+    padding: 0 0.5rem !important;
+    height: 38px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    white-space: nowrap;
+  }
+
+  .amazon-subnav::-webkit-scrollbar {
     display: none;
   }
-  .amazon-hero-banner h1 {
-    font-size: 2rem;
+
+  .subnav-left {
+    display: flex !important;
+    gap: 0.4rem !important;
+    flex-shrink: 0;
   }
-  .quad-grid {
-    grid-template-columns: 1fr;
+
+  .subnav-link {
+    font-size: 0.78rem !important;
+    padding: 0.25rem 0.6rem !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    white-space: nowrap !important;
   }
-  .amazon-quad-section {
-    margin-top: -60px;
+
+  .subnav-right {
+    display: none !important;
   }
+
+  /* Hero Banner on Mobile */
+  .amazon-hero-banner {
+    height: 170px !important;
+    background-position: center !important;
+  }
+
+  .hero-banner-content h1 {
+    font-size: 1.4rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  /* Catalog Header & Filters on Mobile */
+  .catalog-header-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.6rem !important;
+    margin-bottom: 0.8rem !important;
+    padding-bottom: 0.6rem !important;
+  }
+
+  .catalog-header-bar h2 {
+    font-size: 1.15rem !important;
+  }
+
+  .catalog-filter-tabs {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    width: 100% !important;
+    padding-bottom: 4px !important;
+    gap: 0.35rem !important;
+  }
+
+  .catalog-filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-chip {
+    flex-shrink: 0 !important;
+    font-size: 0.78rem !important;
+    padding: 0.3rem 0.75rem !important;
+    border-radius: 14px !important;
+    white-space: nowrap !important;
+  }
+
+  /* 2-Column Amazon Mobile Product Grid */
   .amazon-product-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    padding: 0 !important;
   }
+
+  .amz-product-card {
+    padding: 0.55rem !important;
+    border-radius: 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .amz-card-thumb {
+    height: 135px !important;
+    margin-bottom: 0.35rem !important;
+    background: #fdfdfd !important;
+    position: relative !important;
+  }
+
+  .amz-card-thumb img {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .amz-card-title {
+    font-size: 0.82rem !important;
+    line-height: 1.25 !important;
+    height: 2.1rem !important;
+    -webkit-line-clamp: 2 !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .amz-card-specs {
+    font-size: 0.68rem !important;
+    margin-bottom: 0.25rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .amz-card-ratings {
+    font-size: 0.72rem !important;
+    margin-bottom: 0.3rem !important;
+    gap: 0.2rem !important;
+  }
+
+  .stars-gold {
+    font-size: 0.75rem !important;
+  }
+
+  .review-count {
+    font-size: 0.68rem !important;
+  }
+
+  .deal-line {
+    font-size: 0.68rem !important;
+    gap: 0.3rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .deal-tag-red {
+    padding: 0.15rem 0.35rem !important;
+    font-size: 0.65rem !important;
+  }
+
+  .deal-label-red {
+    font-size: 0.65rem !important;
+  }
+
+  .price-main {
+    font-size: 1.18rem !important;
+    font-weight: 800 !important;
+    color: #b12704 !important;
+  }
+
+  .mrp-line {
+    font-size: 0.7rem !important;
+  }
+
+  .delivery-promise {
+    font-size: 0.68rem !important;
+    margin-bottom: 0.35rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .card-actions-row {
+    flex-direction: column !important;
+    gap: 0.35rem !important;
+    margin-top: 0.35rem !important;
+  }
+
+  .qty-pill {
+    width: 100% !important;
+    justify-content: space-between !important;
+    height: 30px !important;
+  }
+
+  .qty-pill button {
+    width: 32px !important;
+    height: 30px !important;
+  }
+
+  .btn-add-amz {
+    width: 100% !important;
+    height: 34px !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+  }
+
+  /* Package Tracker Section on Mobile */
+  .tracker-card {
+    padding: 1.2rem 1rem !important;
+  }
+
+  .tracker-title-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+  }
+
+  .tracker-input-row {
+    flex-direction: column !important;
+    gap: 0.6rem !important;
+  }
+
+  .tracker-input-row input {
+    width: 100% !important;
+  }
+
+  .tracker-input-row button {
+    width: 100% !important;
+    padding: 0.7rem !important;
+  }
+
+  /* Cart Drawer on Mobile */
+  .cart-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Checkout Modal on Mobile */
+  .modal-card {
+    width: 95% !important;
+    max-height: 94vh !important;
+    padding: 0 !important;
+    margin: auto !important;
+  }
+
+  .checkout-body {
+    padding: 1rem 0.8rem !important;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem !important;
+  }
+
+  .checkout-section-box {
+    padding-bottom: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Combos Section on Mobile */
   .combos-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
   }
-  .footer-cols-grid {
-    grid-template-columns: 1fr;
+
+  /* Floating WhatsApp Button Mobile Position */
+  .floating-whatsapp-btn {
+    bottom: 16px !important;
+    right: 14px !important;
+    padding: 10px 16px !important;
+    font-size: 0.82rem !important;
+    border-radius: 30px !important;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4) !important;
+  }
+
+  .floating-whatsapp-btn span {
+    font-size: 0.82rem !important;
   }
 }
 
-@media (max-width: 480px) {
-  .amazon-product-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Floating WhatsApp Quick Action Button */
+/* Floating WhatsApp Quick Action Button (Desktop Base) */
 .floating-whatsapp-btn {
   position: fixed;
   bottom: 25px;
@@ -2075,68 +2448,69 @@ a:hover {
 }
 
 @media (max-width: 600px) {
-/* Badges: #1 Best Seller, Amazon's Choice, Limited Deal, Recommended */
-.amz-badge-bestseller {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  background: #e67a00;
-  color: #fff;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 0.22rem 0.55rem;
-  border-radius: 2px;
-  z-index: 2;
-  box-shadow: 0 2px 5px rgba(230, 122, 0, 0.4);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  letter-spacing: 0.3px;
-}
+  /* Badges: #1 Best Seller, Amazon's Choice, Limited Deal, Recommended */
+  .amz-badge-bestseller {
+    position: absolute;
+    top: 0.4rem;
+    left: 0.4rem;
+    background: #e67a00;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(230, 122, 0, 0.4);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    letter-spacing: 0.2px;
+  }
 
-.amz-badge-choice {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  background: #232f3e;
-  color: #fff;
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 0.22rem 0.55rem;
-  border-radius: 2px;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-.amz-badge-choice .highlight {
-  color: #f90;
-}
+  .amz-badge-choice {
+    position: absolute;
+    top: 0.4rem;
+    left: 0.4rem;
+    background: #232f3e;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  .amz-badge-choice .highlight {
+    color: #f90;
+  }
 
-.amz-badge-deal {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  background: #cc0c39;
-  color: #fff;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 0.22rem 0.55rem;
-  border-radius: 2px;
-  z-index: 2;
-}
+  .amz-badge-deal {
+    position: absolute;
+    top: 0.4rem;
+    left: 0.4rem;
+    background: #cc0c39;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    z-index: 2;
+  }
 
-.amz-badge-recommended {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  background: #4c1d95;
-  color: #fde047;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 0.22rem 0.55rem;
-  border-radius: 2px;
-  z-index: 2;
+  .amz-badge-recommended {
+    position: absolute;
+    top: 0.4rem;
+    left: 0.4rem;
+    background: #4c1d95;
+    color: #fde047;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    z-index: 2;
+  }
 }
 
 .amz-card-thumb, .amz-card-title {

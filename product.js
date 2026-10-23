@@ -166,6 +166,9 @@ function renderProductPage(prod) {
   const buyBoxPrice = document.getElementById('buyBoxPrice');
   if (buyBoxPrice) buyBoxPrice.innerText = `₹${price.toLocaleString('en-IN')}`;
 
+  const stickyPrice = document.getElementById('stickyPriceVal');
+  if (stickyPrice) stickyPrice.innerText = `₹${price.toLocaleString('en-IN')}`;
+
   const buyBoxStock = document.getElementById('buyBoxStock');
   if (buyBoxStock) {
     if (prod.inStock !== false) {
@@ -176,6 +179,10 @@ function renderProductPage(prod) {
       const buyBtn = document.getElementById('btnPageBuyNow');
       if (cartBtn) cartBtn.disabled = true;
       if (buyBtn) buyBtn.disabled = true;
+      const stickyCart = document.querySelector('.sticky-btn-cart');
+      const stickyBuy = document.querySelector('.sticky-btn-buy');
+      if (stickyCart) stickyCart.disabled = true;
+      if (stickyBuy) stickyBuy.disabled = true;
     }
   }
 
